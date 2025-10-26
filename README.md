@@ -1,4 +1,4 @@
-# DestroyerBot Site
+# DestroyerBot Web
 
 A promotional website for DestroyerBot, the ultimate Discord moderation bot to keep your server safe and organized.
 
@@ -37,8 +37,8 @@ The website showcases:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/destroyerdust/DestroyerBot-site.git
-   cd destroyerbot-site
+   git clone https://github.com/destroyerdust/DestroyerBot-web.git
+   cd destroyerbot-web
    ```
 
 2. Install dependencies:
@@ -72,7 +72,7 @@ The site is configured for deployment on Vercel with SPA routing. Push to the ma
 ## Repository
 
 - **Bot Code**: [DestroyerBot](https://github.com/destroyerdust/DestroyerBot)
-- **Site Code**: [DestroyerBot-site](https://github.com/destroyerdust/DestroyerBot-site)
+- **Site Code**: [DestroyerBot-web](https://github.com/destroyerdust/DestroyerBot-web)
 
 ## Invite DestroyerBot
 
