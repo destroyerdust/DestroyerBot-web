@@ -13,7 +13,7 @@
         </div>
         <div class="bg-gray-700 p-6 rounded-lg text-center">
           <h3 class="text-xl font-semibold mb-4">Global Commands</h3>
-          <p>Weather forecasts, 3D print status, and moderation tools accessible from any server.</p>
+          <p>Weather forecasts, and moderation tools accessible from any server.</p>
         </div>
       </div>
     </div>
