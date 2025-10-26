@@ -1,5 +1,10 @@
 import './assets/main.css'
 import { createApp } from 'vue'
+import Analytics from '@vercel/analytics'
 import App from './App.vue'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+
+app.mount('#app')
+
+new Analytics()
