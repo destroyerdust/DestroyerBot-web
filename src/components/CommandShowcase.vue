@@ -44,10 +44,6 @@
             <p class="text-gray-300 mt-2">Get current weather for a location (e.g., "New York").</p>
           </div>
           <div class="mb-4">
-            <code class="text-green-400">/3d-print-status</code>
-            <p class="text-gray-300 mt-2">Check 3D print status.</p>
-          </div>
-          <div class="mb-4">
             <code class="text-green-400">/kick member</code>
             <p class="text-gray-300 mt-2">Kick a member from the server.</p>
           </div>
