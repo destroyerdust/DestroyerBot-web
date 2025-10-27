@@ -12,19 +12,33 @@ DestroyerBot is a personal Discord bot built with Discord.js v14, featuring:
 
 ## Tech Stack
 
-- **Frontend**: Vue.js 3.4.0
+- **Frontend**: Vue.js 3.4.0 with Vue Router 4.6
 - **Build Tool**: Vite 5.0.0
-- **Styling**: Tailwind CSS v4.0-beta
+- **Styling**: Tailwind CSS v4.0 (alpha)
+- **Analytics**: Vercel Analytics
 - **Deployment**: Vercel
 
 ## Features
 
 The website showcases:
-- Hero section with Discord invite link
-- Bot description and key features
-- Command examples organized by category
-- Responsive design with dark theme
-- Clean, modern UI using gradients and cards
+- Hero section with animated gradient background and invite button
+- Bot description and technical details (Discord.js v14, Node.js)
+- Interactive command showcase with tabbed categories:
+  - Utility: `/ping`, `/user-info`, `/server`
+  - Gaming: `/rio character realm`, `/pokemon search`
+  - Global: `/weather location`, `/kick member`
+- Real-time command copying with clipboard API
+- Responsive design with dark theme and glassmorphism effects
+- Modern UI using gradients, cards, and hover animations
+- Quick stats and social links
+
+## Project Structure
+
+This is a single-page Vue.js application with:
+- Component-based architecture using 5 main sections
+- Vue Router for client-side routing
+- Custom CSS animations and responsive layouts
+- SPA optimized for deployment on Vercel
 
 ## Development
 
