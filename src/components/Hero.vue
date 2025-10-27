@@ -102,7 +102,8 @@ export default {
       const clientId = '773000914319048736'
       const redirectUri = encodeURIComponent('http://localhost:3000/api/auth/discord')
       const scope = encodeURIComponent('identify email')
-      return `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`
+      const state = encodeURIComponent(window.location.origin)
+      return `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`
     })
 
     return {

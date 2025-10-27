@@ -5,13 +5,16 @@ This project now includes Discord OAuth 2.0 authentication with a dashboard page
 
 ## Architecture
 
-### Frontend (Port 5173)
-- **Vite Dev Server**: Serves the Vue.js application
+### Frontend (Port 5173 or 4173)
+- **Vite Dev Server**: Serves the Vue.js application on port 5173 (dev mode)
+- **Vite Preview Server**: Serves production build on port 4173 (preview mode)
 - **Dashboard Component**: `/dashboard` route that displays user information
 - **Hero Component**: Includes "Login with Discord" button
 
 ### Backend (Port 3000)
 - **Express Server**: Handles OAuth callbacks and session management
+- **CORS**: Configured to accept requests from both port 5173 and 4173
+- **Dynamic Redirects**: Automatically redirects to the correct frontend port
 - **Endpoints**:
   - `GET /api/auth/discord` - Discord OAuth callback
   - `GET /api/auth/logout` - Logout endpoint
@@ -22,10 +25,19 @@ This project now includes Discord OAuth 2.0 authentication with a dashboard page
 You need to run both the frontend and backend servers simultaneously:
 
 ### 1. Start the Frontend
+
+**Development Mode:**
 ```bash
 npm run dev
 ```
 Runs on: http://localhost:5173
+
+**Preview Mode (Production Build):**
+```bash
+npm run build
+npm run preview
+```
+Runs on: http://localhost:4173
 
 ### 2. Start the Backend Server
 Open a new terminal and run:
@@ -34,7 +46,10 @@ npm run server
 ```
 Runs on: http://localhost:3000
 
-**Note**: Both servers must be running for authentication to work properly.
+**Note**: 
+- Both servers must be running for authentication to work properly.
+- The backend server automatically supports both dev (5173) and preview (4173) ports.
+- Redirects after login/logout will automatically use the correct port.
 
 ## Testing the Authentication Flow
 

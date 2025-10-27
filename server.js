@@ -9,9 +9,24 @@ dotenv.config({ path: '.env.local' });
 const app = express();
 const PORT = 3000;
 
+// Support both dev (5173) and preview (4173) modes
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173', // Vite dev server
+  'http://localhost:4173'  // Vite preview server
+];
+
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
@@ -19,7 +34,7 @@ app.use(cookieParser());
 
 // Discord OAuth callback endpoint
 app.get('/api/auth/discord', async (req, res) => {
-  const { code } = req.query;
+  const { code, state } = req.query;
 
   if (!code) {
     return res.status(400).json({ error: 'No code provided' });
@@ -86,8 +101,20 @@ app.get('/api/auth/discord', async (req, res) => {
       maxAge: 604800000, // 7 days
     });
 
-    // Redirect to dashboard
-    res.redirect('http://localhost:5173/dashboard');
+    // Redirect to dashboard - use state parameter (contains origin) or fallback to referer
+    let redirectUrl = 'http://localhost:5173'; // default
+    
+    if (state && ALLOWED_ORIGINS.includes(decodeURIComponent(state))) {
+      redirectUrl = decodeURIComponent(state);
+    } else {
+      const referer = req.get('referer');
+      const origin = referer ? referer.match(/^https?:\/\/[^\/]+/)?.[0] : null;
+      if (origin && ALLOWED_ORIGINS.includes(origin)) {
+        redirectUrl = origin;
+      }
+    }
+    
+    res.redirect(`${redirectUrl}/dashboard`);
   } catch (error) {
     console.error('Discord OAuth error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -99,7 +126,10 @@ app.get('/api/auth/logout', (req, res) => {
   // Clear cookies
   res.clearCookie('discord_session', { path: '/' });
   res.clearCookie('discord_user', { path: '/' });
-  res.redirect('http://localhost:5173/');
+  
+  // Redirect to home - use referer or default to dev port
+  const origin = req.get('origin') || req.get('referer')?.match(/^https?:\/\/[^\/]+/)?.[0] || 'http://localhost:5173';
+  res.redirect(`${origin}/`);
 });
 
 // Health check endpoint
@@ -109,6 +139,8 @@ app.get('/health', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Auth server running on http://localhost:${PORT}`);
-  console.log(`📱 Frontend running on http://localhost:5173`);
+  console.log(`📱 Frontend can run on:`);
+  console.log(`   - Dev mode:     http://localhost:5173 (npm run dev)`);
+  console.log(`   - Preview mode: http://localhost:4173 (npm run preview)`);
   console.log(`🔐 Discord OAuth redirect: ${process.env.DISCORD_REDIRECT_URI}`);
 });

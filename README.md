@@ -126,7 +126,7 @@ DestroyerBot-web/
 
 4. Start the development servers:
    ```bash
-   # Terminal 1: Frontend (Vite)
+   # Terminal 1: Frontend (Vite Dev Server)
    npm run dev
    
    # Terminal 2: Backend (Express Auth Server)
@@ -134,6 +134,21 @@ DestroyerBot-web/
    ```
 
 5. Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Testing Production Build Locally
+
+To test the production build with authentication:
+```bash
+# Terminal 1: Build and preview
+npm run build
+npm run preview
+
+# Terminal 2: Backend server (same as dev)
+npm run server
+```
+Then open [http://localhost:4173](http://localhost:4173)
+
+**Note**: The backend server automatically supports both dev (5173) and preview (4173) ports.
 
 ### Discord OAuth Setup
 
