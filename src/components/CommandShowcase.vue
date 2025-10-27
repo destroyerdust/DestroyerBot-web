@@ -1,52 +1,127 @@
 <template>
-  <section class="py-20 px-4">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-4xl font-bold mb-12 text-center text-purple-400">Command Examples</h2>
-      <div class="bg-gray-800 p-6 rounded-lg">
-        <div class="mb-6">
-          <h3 class="text-xl font-semibold text-blue-400 mb-4">Utility Commands</h3>
-          <div class="mb-4">
-            <code class="text-green-400">/ping</code>
-            <p class="text-gray-300 mt-2">Replies with Pong!</p>
+  <section class="py-20 px-4 bg-gray-900">
+    <div class="max-w-5xl mx-auto">
+      <h2
+        class="text-5xl font-bold mb-4 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+      >
+        Command Examples
+      </h2>
+      <p class="text-center text-gray-400 mb-12 text-lg">
+        Explore our comprehensive command library
+      </p>
+
+      <!-- Tab Navigation -->
+      <div class="flex flex-wrap justify-center gap-4 mb-8">
+        <button
+          v-for="category in categories"
+          :key="category.id"
+          @click="activeTab = category.id"
+          :class="[
+            'px-6 py-3 rounded-xl font-semibold transition-all duration-300',
+            activeTab === category.id
+              ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30 scale-105'
+              : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white',
+          ]"
+        >
+          {{ category.icon }} {{ category.name }}
+        </button>
+      </div>
+
+      <!-- Command Cards Container -->
+      <div class="relative">
+        <transition-group name="fade" tag="div" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            v-for="command in filteredCommands"
+            :key="command.command"
+            class="group relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300 overflow-hidden"
+          >
+            <!-- Glow effect -->
+            <div
+              class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/5 group-hover:to-blue-500/5 transition-all duration-300"
+            ></div>
+
+            <div class="relative p-6">
+              <!-- Command header -->
+              <div class="flex items-start justify-between mb-3">
+                <code class="text-lg font-mono text-green-400 font-semibold">
+                  {{ command.command }}
+                </code>
+                <button
+                  @click="copyCommand(command.command)"
+                  :class="[
+                    'p-2 rounded-lg transition-all duration-300',
+                    copiedCommand === command.command
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-white',
+                  ]"
+                  :title="copiedCommand === command.command ? 'Copied!' : 'Copy command'"
+                >
+                  <svg
+                    v-if="copiedCommand !== command.command"
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Command description -->
+              <p class="text-gray-300 text-sm leading-relaxed">
+                {{ command.description }}
+              </p>
+
+              <!-- Example badge (if available) -->
+              <div v-if="command.example" class="mt-4 pt-4 border-t border-gray-700">
+                <div class="text-xs text-gray-500 mb-2">Example:</div>
+                <code class="text-xs font-mono text-blue-400 bg-gray-800/50 px-2 py-1 rounded">
+                  {{ command.example }}
+                </code>
+              </div>
+            </div>
+
+            <!-- Animated border -->
+            <div
+              class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            >
+              <div class="absolute inset-0 rounded-xl border-2 border-purple-500/50"></div>
+            </div>
           </div>
-          <div class="mb-4">
-            <code class="text-green-400">/user-info</code>
-            <p class="text-gray-300 mt-2">Displays information about yourself.</p>
-          </div>
-          <div class="mb-4">
-            <code class="text-green-400">/server</code>
-            <p class="text-gray-300 mt-2">Displays comprehensive server information.</p>
-          </div>
+        </transition-group>
+      </div>
+
+      <!-- Quick stats -->
+      <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="text-center p-6 bg-gray-800/50 rounded-xl border border-gray-700">
+          <div class="text-3xl font-bold text-purple-400 mb-2">10+</div>
+          <div class="text-sm text-gray-400">Total Commands</div>
         </div>
-        <div class="mb-6">
-          <h3 class="text-xl font-semibold text-blue-400 mb-4">Gaming Commands</h3>
-          <div class="mb-4">
-            <code class="text-green-400">/rio character realm</code>
-            <p class="text-gray-300 mt-2">Raider IO World of Warcraft character information.</p>
-          </div>
-          <div class="mb-4">
-            <code class="text-green-400">/rio guild realm</code>
-            <p class="text-gray-300 mt-2">Raider IO guild information.</p>
-          </div>
-          <div class="mb-4">
-            <code class="text-green-400">/pokemon search query</code>
-            <p class="text-gray-300 mt-2">Search Pokemon TCG cards by name.</p>
-          </div>
-          <div class="mb-4">
-            <code class="text-green-400">/pokemon random</code>
-            <p class="text-gray-300 mt-2">Get a random Pokemon card.</p>
-          </div>
+        <div class="text-center p-6 bg-gray-800/50 rounded-xl border border-gray-700">
+          <div class="text-3xl font-bold text-blue-400 mb-2">3</div>
+          <div class="text-sm text-gray-400">Categories</div>
         </div>
-        <div class="mb-6">
-          <h3 class="text-xl font-semibold text-blue-400 mb-4">Global Commands</h3>
-          <div class="mb-4">
-            <code class="text-green-400">/weather location</code>
-            <p class="text-gray-300 mt-2">Get current weather for a location (e.g., "New York").</p>
-          </div>
-          <div class="mb-4">
-            <code class="text-green-400">/kick member</code>
-            <p class="text-gray-300 mt-2">Kick a member from the server.</p>
-          </div>
+        <div class="text-center p-6 bg-gray-800/50 rounded-xl border border-gray-700">
+          <div class="text-3xl font-bold text-indigo-400 mb-2">Fast</div>
+          <div class="text-sm text-gray-400">Response Time</div>
+        </div>
+        <div class="text-center p-6 bg-gray-800/50 rounded-xl border border-gray-700">
+          <div class="text-3xl font-bold text-purple-400 mb-2">24/7</div>
+          <div class="text-sm text-gray-400">Availability</div>
         </div>
       </div>
     </div>
@@ -56,5 +131,119 @@
 <script>
 export default {
   name: 'CommandShowcase',
+  data() {
+    return {
+      activeTab: 'utility',
+      copiedCommand: null,
+      categories: [
+        { id: 'utility', name: 'Utility', icon: '⚡' },
+        { id: 'gaming', name: 'Gaming', icon: '🎮' },
+        { id: 'global', name: 'Global', icon: '🌍' },
+      ],
+      commands: [
+        {
+          category: 'utility',
+          command: '/ping',
+          description:
+            "Check the bot's response time and latency. Perfect for testing if the bot is online and responsive.",
+          example: '/ping',
+        },
+        {
+          category: 'utility',
+          command: '/user-info',
+          description:
+            'Display detailed information about yourself including join date, roles, and account creation date.',
+          example: '/user-info',
+        },
+        {
+          category: 'utility',
+          command: '/server',
+          description:
+            'Get comprehensive server statistics including member count, channel count, and server creation date.',
+          example: '/server',
+        },
+        {
+          category: 'gaming',
+          command: '/rio character realm',
+          description:
+            'Fetch detailed Raider IO World of Warcraft character information including Mythic+ scores and raid progress.',
+          example: '/rio character Arthas realm Tichondrius',
+        },
+        {
+          category: 'gaming',
+          command: '/rio guild realm',
+          description:
+            'Get comprehensive Raider IO guild information and rankings for your WoW guild.',
+          example: '/rio guild MyGuild realm Tichondrius',
+        },
+        {
+          category: 'gaming',
+          command: '/pokemon search query',
+          description:
+            'Search the Pokemon Trading Card Game database by card name to find specific cards and their details.',
+          example: '/pokemon search Charizard',
+        },
+        {
+          category: 'gaming',
+          command: '/pokemon random',
+          description:
+            'Get a random Pokemon card from the TCG database. Great for discovering new cards!',
+          example: '/pokemon random',
+        },
+        {
+          category: 'global',
+          command: '/weather location',
+          description: 'Get current weather conditions and forecast for any location worldwide.',
+          example: '/weather New York',
+        },
+        {
+          category: 'global',
+          command: '/kick member',
+          description:
+            'Kick a member from the server. Requires kick permissions. Use with caution.',
+          example: '/kick @username',
+        },
+      ],
+    }
+  },
+  computed: {
+    filteredCommands() {
+      return this.commands.filter(cmd => cmd.category === this.activeTab)
+    },
+  },
+  methods: {
+    async copyCommand(command) {
+      try {
+        await navigator.clipboard.writeText(command)
+        this.copiedCommand = command
+        setTimeout(() => {
+          this.copiedCommand = null
+        }, 2000)
+      } catch (err) {
+        console.error('Failed to copy:', err)
+      }
+    },
+  },
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.fade-move {
+  transition: transform 0.3s ease;
+}
+</style>
