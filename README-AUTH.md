@@ -24,32 +24,36 @@ This project now includes Discord OAuth 2.0 authentication with a dashboard page
 
 You need to run both the frontend and backend servers simultaneously:
 
-### 1. Start the Frontend
-
-**Development Mode:**
+### Quick Setup (Recommended)
 ```bash
-npm run dev
+npm run dev:full
 ```
-Runs on: http://localhost:5173
+This starts both servers simultaneously and provides you with a single-command solution for development.
 
-**Preview Mode (Production Build):**
+### Manual Setup
+
+**Terminal 1 - Frontend:**
 ```bash
+# Development Mode
+npm run dev
+# Runs on: http://localhost:5173
+
+# OR Preview Mode (Production Build)
 npm run build
 npm run preview
+# Runs on: http://localhost:4173
 ```
-Runs on: http://localhost:4173
 
-### 2. Start the Backend Server
-Open a new terminal and run:
+**Terminal 2 - Backend:**
 ```bash
 npm run server
+# Runs on: http://localhost:3000
 ```
-Runs on: http://localhost:3000
 
-**Note**: 
+**Note**:
 - Both servers must be running for authentication to work properly.
 - The backend server automatically supports both dev (5173) and preview (4173) ports.
-- Redirects after login/logout will automatically use the correct port.
+- Redirects after login/logout will automatically use the correct port via OAuth state parameter.
 
 ## Testing the Authentication Flow
 

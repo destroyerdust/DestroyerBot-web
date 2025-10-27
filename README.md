@@ -180,12 +180,13 @@ npm run preview
 |---------|-------------|
 | `npm run dev` | Start Vite development server (frontend) on port 5173 |
 | `npm run server` | Start Express auth server (backend) on port 3000 |
+| `npm run dev:full` | Start both frontend and backend servers simultaneously |
 | `npm run build` | Build production bundle with Vite |
 | `npm run preview` | Preview production build locally |
 | `npm run format` | Format code with Prettier |
 | `npm run format:check` | Check code formatting without making changes |
 
-**Note**: For full authentication functionality during development, you must run both `npm run dev` and `npm run server` simultaneously in separate terminals.
+**Note**: For full authentication functionality during development, you must run both `npm run dev` and `npm run server` simultaneously. Use `npm run dev:full` for a single-command setup!
 
 ## Deployment
 
