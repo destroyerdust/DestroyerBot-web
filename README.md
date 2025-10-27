@@ -6,9 +6,10 @@ A promotional website for DestroyerBot, the ultimate Discord moderation bot to k
 
 DestroyerBot is a personal Discord bot built with Discord.js v14, featuring:
 - Utility commands (ping, user info, server stats)
-- Gaming integrations (WoW Raider IO, Pokemon TCG)
-- Weather updates and moderation tools
-- Global commands accessible from any server
+- Gaming integrations (WoW Raider IO character/guild stats, Pokemon TCG card searches)
+- Advanced role-based permission system
+- Weather forecasting with Pirate Weather API
+- Moderation tools and customizable command permissions
 
 ## Tech Stack
 
@@ -24,9 +25,9 @@ The website showcases:
 - Hero section with animated gradient background and invite button
 - Bot description and technical details (Discord.js v14, Node.js)
 - Interactive command showcase with tabbed categories:
-  - Utility: `/ping`, `/user-info`, `/server`
-  - Gaming: `/rio character realm`, `/pokemon search`
-  - Global: `/weather location`, `/kick member`
+  - Utility: `/ping`, `/user-info`, `/server`, `/weather`
+  - Gaming: `/rio character/guild realm`, `/pokemon search/random`
+  - Administrator: `/kick`, `/setcommandrole`, `/listpermissions`
 - Real-time command copying with clipboard API
 - Responsive design with dark theme and glassmorphism effects
 - Modern UI using gradients, cards, and hover animations

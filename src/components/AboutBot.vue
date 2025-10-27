@@ -28,12 +28,12 @@
           <p class="text-lg leading-relaxed text-gray-300">
             DestroyerBot is a personal Discord bot built with
             <span class="text-purple-400 font-semibold">Discord.js v14</span>, featuring utility
-            commands, gaming stats integration, weather updates, and basic moderation tools.
+            commands, gaming stats integration, weather updates, and an advanced role-based permission system.
           </p>
 
           <p class="text-lg leading-relaxed text-gray-300">
-            It includes global commands like weather forecasting and Pokemon card information,
-            making it a versatile bot for any Discord server.
+            It includes WoW Raider IO character/guild lookups, Pokemon TCG card searches, weather forecasting
+            with Pirate Weather API, and customizable command permissions, making it a versatile bot for any Discord server.
           </p>
 
           <!-- Feature highlights -->
