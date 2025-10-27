@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+package-lock.json
+
+# Build output
+dist
+.output
+.nuxt
+.next
+
+# Cache
+.cache
+.parcel-cache
+.vite
+
+# IDE
+.vscode
+.idea
+
+# Misc
+*.log
+.DS_Store
+coverage
+.env
+.env.*
