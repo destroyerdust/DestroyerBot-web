@@ -126,7 +126,8 @@
             Administrator Tools
           </h3>
           <p class="text-gray-400 leading-relaxed">
-            Advanced role-based permission system and moderation tools. Control command access and manage your server effectively.
+            Advanced role-based permission system and moderation tools. Control command access and
+            manage your server effectively.
           </p>
 
           <!-- Decorative corner -->
