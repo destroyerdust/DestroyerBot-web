@@ -131,6 +131,119 @@ app.get('/api/auth/discord', async (req, res) => {
   }
 });
 
+// In-memory storage for guild settings (in production, use a database)
+const guildSettings = new Map();
+
+// Individual guild endpoint
+app.get('/api/guilds/:id', async (req, res) => {
+  const { id } = req.params;
+  const token = req.cookies?.discord_token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+
+  try {
+    // Fetch user's guilds to verify access
+    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!guildsResponse.ok) {
+      return res.status(guildsResponse.status).json({ error: 'Failed to fetch guilds' });
+    }
+
+    const guilds = await guildsResponse.json();
+    const guild = guilds.find(g => g.id === id);
+
+    if (!guild) {
+      return res.status(404).json({ error: 'Guild not found or no access' });
+    }
+
+    // Check if user has MANAGE_GUILD permission
+    const MANAGE_GUILD = 0x00000020;
+    const permissions = parseInt(guild.permissions);
+    
+    if ((permissions & MANAGE_GUILD) !== MANAGE_GUILD && (permissions & 0x00000008) !== 0x00000008) {
+      return res.status(403).json({ error: 'Insufficient permissions' });
+    }
+
+    // Get stored settings or return defaults
+    const settings = guildSettings.get(id) || {
+      prefix: '!',
+      welcomeEnabled: false,
+      welcomeMessage: '',
+      filterProfanity: false,
+      antiSpam: false,
+      linkFilter: false,
+      logDeletes: false,
+      logMembers: false,
+      logModeration: false
+    };
+
+    return res.status(200).json({ 
+      guild: {
+        id: guild.id,
+        name: guild.name,
+        icon: guild.icon,
+        owner: guild.owner
+      },
+      settings 
+    });
+  } catch (error) {
+    console.error('Error fetching guild:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Save guild settings endpoint
+app.post('/api/guilds/:id/settings', async (req, res) => {
+  const { id } = req.params;
+  const token = req.cookies?.discord_token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+
+  try {
+    // Verify user has access to this guild
+    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!guildsResponse.ok) {
+      return res.status(guildsResponse.status).json({ error: 'Failed to fetch guilds' });
+    }
+
+    const guilds = await guildsResponse.json();
+    const guild = guilds.find(g => g.id === id);
+
+    if (!guild) {
+      return res.status(404).json({ error: 'Guild not found or no access' });
+    }
+
+    // Check permissions
+    const MANAGE_GUILD = 0x00000020;
+    const permissions = parseInt(guild.permissions);
+    
+    if ((permissions & MANAGE_GUILD) !== MANAGE_GUILD && (permissions & 0x00000008) !== 0x00000008) {
+      return res.status(403).json({ error: 'Insufficient permissions' });
+    }
+
+    // Save settings (in production, save to database)
+    guildSettings.set(id, req.body);
+
+    return res.status(200).json({ success: true, settings: req.body });
+  } catch (error) {
+    console.error('Error saving guild settings:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Guilds endpoint
 app.get('/api/guilds', async (req, res) => {
   // Get access token from cookie

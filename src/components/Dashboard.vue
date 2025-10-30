@@ -144,26 +144,31 @@
       <!-- Servers List -->
       <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6 mb-8">
         <h3 class="text-xl font-bold text-white mb-4">Your Servers (Manage Permission)</h3>
-        
+
         <!-- Loading Guilds -->
         <div v-if="loadingGuilds" class="flex justify-center py-8">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-500 border-t-transparent"></div>
+          <div
+            class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-500 border-t-transparent"
+          ></div>
         </div>
-        
+
         <!-- No Servers -->
         <div v-else-if="guilds.length === 0" class="text-center py-8">
           <p class="text-gray-400">No servers found with Manage Server permission</p>
         </div>
-        
+
         <!-- Servers Grid -->
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
             v-for="guild in guilds"
             :key="guild.id"
+            @click="navigateToGuild(guild.id)"
             class="bg-black/30 border border-purple-500/20 rounded-lg p-4 hover:border-purple-500/40 transition-colors cursor-pointer"
           >
             <div class="flex items-center gap-4">
-              <div class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <div
+                class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 overflow-hidden"
+              >
                 <img
                   v-if="getGuildIcon(guild)"
                   :src="getGuildIcon(guild)"
@@ -241,7 +246,10 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import Cookies from 'js-cookie'
+
+const router = useRouter()
 
 const user = ref(null)
 const loading = ref(true)
@@ -270,9 +278,9 @@ const fetchGuilds = async () => {
   loadingGuilds.value = true
   try {
     const response = await fetch('http://localhost:3000/api/guilds', {
-      credentials: 'include'
+      credentials: 'include',
     })
-    
+
     if (response.ok) {
       const data = await response.json()
       guilds.value = data.guilds || []
@@ -286,7 +294,7 @@ const fetchGuilds = async () => {
   }
 }
 
-const getGuildIcon = (guild) => {
+const getGuildIcon = guild => {
   if (guild.icon) {
     return `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128`
   }
@@ -306,6 +314,10 @@ onMounted(async () => {
   }
   loading.value = false
 })
+
+const navigateToGuild = guildId => {
+  router.push(`/guild/${guildId}`)
+}
 
 const logout = () => {
   window.location.href = 'http://localhost:3000/api/auth/logout'
