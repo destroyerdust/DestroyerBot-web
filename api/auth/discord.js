@@ -18,6 +18,7 @@ export default async function handler(req, res) {
         grant_type: 'authorization_code',
         code: code,
         redirect_uri: process.env.DISCORD_REDIRECT_URI,
+        scope: 'identify email guilds',
       }),
     });
 
@@ -51,13 +52,17 @@ export default async function handler(req, res) {
       email: userData.email,
     };
 
+    // Store access token for API calls (encrypted in production)
+    const accessToken = tokenData.access_token;
+    
     // Create a simple session token (in production, use proper JWT or session management)
     const sessionToken = Buffer.from(JSON.stringify(userInfo)).toString('base64');
 
     // Set cookie with session data
     res.setHeader('Set-Cookie', [
       `discord_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`,
-      `discord_user=${encodeURIComponent(JSON.stringify(userInfo))}; Path=/; SameSite=Lax; Max-Age=604800`
+      `discord_user=${encodeURIComponent(JSON.stringify(userInfo))}; Path=/; SameSite=Lax; Max-Age=604800`,
+      `discord_token=${accessToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`
     ]);
 
     // Redirect to dashboard

@@ -72,7 +72,7 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-400 text-sm">Servers</p>
-              <p class="text-3xl font-bold text-white mt-1">0</p>
+              <p class="text-3xl font-bold text-white mt-1">{{ guilds.length }}</p>
             </div>
             <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
               <svg
@@ -141,6 +141,51 @@
         </div>
       </div>
 
+      <!-- Servers List -->
+      <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6 mb-8">
+        <h3 class="text-xl font-bold text-white mb-4">Your Servers (Manage Permission)</h3>
+        
+        <!-- Loading Guilds -->
+        <div v-if="loadingGuilds" class="flex justify-center py-8">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-500 border-t-transparent"></div>
+        </div>
+        
+        <!-- No Servers -->
+        <div v-else-if="guilds.length === 0" class="text-center py-8">
+          <p class="text-gray-400">No servers found with Manage Server permission</p>
+        </div>
+        
+        <!-- Servers Grid -->
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            v-for="guild in guilds"
+            :key="guild.id"
+            class="bg-black/30 border border-purple-500/20 rounded-lg p-4 hover:border-purple-500/40 transition-colors cursor-pointer"
+          >
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <img
+                  v-if="getGuildIcon(guild)"
+                  :src="getGuildIcon(guild)"
+                  :alt="guild.name"
+                  class="w-full h-full object-cover"
+                />
+                <span v-else class="text-2xl font-bold text-purple-400">
+                  {{ guild.name.charAt(0).toUpperCase() }}
+                </span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-white font-semibold truncate">{{ guild.name }}</h4>
+                <p class="text-gray-400 text-sm">
+                  <span v-if="guild.owner" class="text-yellow-400">Owner</span>
+                  <span v-else>Manager</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Quick Actions -->
       <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
         <h3 class="text-xl font-bold text-white mb-4">Quick Actions</h3>
@@ -200,11 +245,13 @@ import Cookies from 'js-cookie'
 
 const user = ref(null)
 const loading = ref(true)
+const guilds = ref([])
+const loadingGuilds = ref(false)
 
 const discordAuthUrl = computed(() => {
   const clientId = '773000914319048736'
   const redirectUri = encodeURIComponent('http://localhost:3000/api/auth/discord')
-  const scope = encodeURIComponent('identify email')
+  const scope = encodeURIComponent('identify email guilds')
   const state = encodeURIComponent(window.location.origin)
   return `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`
 })
@@ -219,12 +266,40 @@ const userAvatar = computed(() => {
   return `https://cdn.discordapp.com/embed/avatars/${parseInt(discriminator) % 5}.png`
 })
 
-onMounted(() => {
+const fetchGuilds = async () => {
+  loadingGuilds.value = true
+  try {
+    const response = await fetch('http://localhost:3000/api/guilds', {
+      credentials: 'include'
+    })
+    
+    if (response.ok) {
+      const data = await response.json()
+      guilds.value = data.guilds || []
+    } else {
+      console.error('Failed to fetch guilds:', await response.text())
+    }
+  } catch (error) {
+    console.error('Error fetching guilds:', error)
+  } finally {
+    loadingGuilds.value = false
+  }
+}
+
+const getGuildIcon = (guild) => {
+  if (guild.icon) {
+    return `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128`
+  }
+  return null
+}
+
+onMounted(async () => {
   // Check for user cookie
   const userCookie = Cookies.get('discord_user')
   if (userCookie) {
     try {
       user.value = JSON.parse(decodeURIComponent(userCookie))
+      await fetchGuilds()
     } catch (e) {
       console.error('Failed to parse user cookie:', e)
     }

@@ -53,6 +53,7 @@ app.get('/api/auth/discord', async (req, res) => {
         grant_type: 'authorization_code',
         code: code,
         redirect_uri: process.env.DISCORD_REDIRECT_URI,
+        scope: 'identify email guilds',
       }),
     });
 
@@ -86,6 +87,9 @@ app.get('/api/auth/discord', async (req, res) => {
       email: userData.email,
     };
 
+    // Store access token for API calls (in production, encrypt this)
+    const accessToken = tokenData.access_token;
+    
     // Create a simple session token (in production, use proper JWT or session management)
     const sessionToken = Buffer.from(JSON.stringify(userInfo)).toString('base64');
 
@@ -97,6 +101,12 @@ app.get('/api/auth/discord', async (req, res) => {
     });
 
     res.cookie('discord_user', encodeURIComponent(JSON.stringify(userInfo)), {
+      sameSite: 'lax',
+      maxAge: 604800000, // 7 days
+    });
+
+    res.cookie('discord_token', accessToken, {
+      httpOnly: true,
       sameSite: 'lax',
       maxAge: 604800000, // 7 days
     });
@@ -121,11 +131,62 @@ app.get('/api/auth/discord', async (req, res) => {
   }
 });
 
+// Guilds endpoint
+app.get('/api/guilds', async (req, res) => {
+  // Get access token from cookie
+  const token = req.cookies?.discord_token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+
+  try {
+    // Fetch user's guilds from Discord API
+    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!guildsResponse.ok) {
+      console.error('Failed to fetch guilds:', await guildsResponse.text());
+      return res.status(guildsResponse.status).json({ error: 'Failed to fetch guilds' });
+    }
+
+    const guilds = await guildsResponse.json();
+
+    // Filter guilds where user has MANAGE_GUILD permission (0x00000020 = 32)
+    // The permissions field is a string representation of a bitfield
+    const MANAGE_GUILD = 0x00000020;
+    
+    const manageableGuilds = guilds.filter(guild => {
+      const permissions = parseInt(guild.permissions);
+      // Check if user has MANAGE_GUILD permission or ADMINISTRATOR permission (0x00000008)
+      return (permissions & MANAGE_GUILD) === MANAGE_GUILD || (permissions & 0x00000008) === 0x00000008;
+    });
+
+    // Return guilds with relevant information
+    const formattedGuilds = manageableGuilds.map(guild => ({
+      id: guild.id,
+      name: guild.name,
+      icon: guild.icon,
+      owner: guild.owner,
+      permissions: guild.permissions,
+    }));
+
+    return res.status(200).json({ guilds: formattedGuilds });
+  } catch (error) {
+    console.error('Error fetching guilds:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Logout endpoint
 app.get('/api/auth/logout', (req, res) => {
   // Clear cookies
   res.clearCookie('discord_session', { path: '/' });
   res.clearCookie('discord_user', { path: '/' });
+  res.clearCookie('discord_token', { path: '/' });
   
   // Redirect to home - use referer or default to dev port
   const origin = req.get('origin') || req.get('referer')?.match(/^https?:\/\/[^\/]+/)?.[0] || 'http://localhost:5173';
