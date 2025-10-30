@@ -2,12 +2,28 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
+import GuildSettings from './models/GuildSettings.js';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
 
 const app = express();
 const PORT = 3000;
+
+// MongoDB Connection
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log('✅ MongoDB connected successfully');
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error);
+    process.exit(1);
+  }
+};
+
+// Connect to MongoDB
+connectDB();
 
 // Support both dev (5173) and preview (4173) modes
 const ALLOWED_ORIGINS = [
@@ -131,9 +147,6 @@ app.get('/api/auth/discord', async (req, res) => {
   }
 });
 
-// In-memory storage for guild settings (in production, use a database)
-const guildSettings = new Map();
-
 // Individual guild endpoint
 app.get('/api/guilds/:id', async (req, res) => {
   const { id } = req.params;
@@ -170,18 +183,23 @@ app.get('/api/guilds/:id', async (req, res) => {
       return res.status(403).json({ error: 'Insufficient permissions' });
     }
 
-    // Get stored settings or return defaults
-    const settings = guildSettings.get(id) || {
-      prefix: '!',
-      welcomeEnabled: false,
-      welcomeMessage: '',
-      filterProfanity: false,
-      antiSpam: false,
-      linkFilter: false,
-      logDeletes: false,
-      logMembers: false,
-      logModeration: false
-    };
+    // Get stored settings from database or return defaults
+    let guildSettingsDoc = await GuildSettings.findOne({ guildId: id });
+    
+    if (!guildSettingsDoc) {
+      // Return default settings if not found
+      guildSettingsDoc = {
+        prefix: '!',
+        welcomeEnabled: false,
+        welcomeMessage: '',
+        filterProfanity: false,
+        antiSpam: false,
+        linkFilter: false,
+        logDeletes: false,
+        logMembers: false,
+        logModeration: false
+      };
+    }
 
     return res.status(200).json({ 
       guild: {
@@ -190,7 +208,7 @@ app.get('/api/guilds/:id', async (req, res) => {
         icon: guild.icon,
         owner: guild.owner
       },
-      settings 
+      settings: guildSettingsDoc
     });
   } catch (error) {
     console.error('Error fetching guild:', error);
@@ -234,10 +252,21 @@ app.post('/api/guilds/:id/settings', async (req, res) => {
       return res.status(403).json({ error: 'Insufficient permissions' });
     }
 
-    // Save settings (in production, save to database)
-    guildSettings.set(id, req.body);
+    // Save settings to database (upsert: create if doesn't exist, update if exists)
+    const updatedSettings = await GuildSettings.findOneAndUpdate(
+      { guildId: id },
+      { 
+        guildId: id,
+        ...req.body 
+      },
+      { 
+        new: true,
+        upsert: true,
+        runValidators: true
+      }
+    );
 
-    return res.status(200).json({ success: true, settings: req.body });
+    return res.status(200).json({ success: true, settings: updatedSettings });
   } catch (error) {
     console.error('Error saving guild settings:', error);
     return res.status(500).json({ error: 'Internal server error' });
