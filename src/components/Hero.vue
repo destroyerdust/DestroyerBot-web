@@ -26,12 +26,16 @@
         >
           DestroyerBot
         </h1>
-        <p class="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 md:mb-10 text-gray-200 leading-relaxed px-2">
+        <p
+          class="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 md:mb-10 text-gray-200 leading-relaxed px-2"
+        >
           The ultimate Discord moderation bot to keep your server safe and organized.
         </p>
 
         <!-- Button group -->
-        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center">
+        <div
+          class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center"
+        >
           <a
             :href="discordAuthUrl"
             class="relative px-6 py-3 sm:px-8 sm:py-4 bg-[#5865F2] text-white rounded-xl font-semibold transition-all duration-300 hover:bg-[#4752C4] hover:scale-105 shadow-lg hover:shadow-xl w-full sm:w-auto"
@@ -56,7 +60,9 @@
         </div>
 
         <!-- Stats section -->
-        <div class="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6 mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8 border-t border-white/20">
+        <div
+          class="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6 mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8 border-t border-white/20"
+        >
           <div class="text-center">
             <div class="text-2xl sm:text-3xl font-bold text-purple-300 mb-1">24/7</div>
             <div class="text-xs sm:text-sm text-gray-300">Online</div>

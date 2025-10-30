@@ -15,7 +15,7 @@
         Powerful tools to manage and enhance your Discord server
       </p>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Feature Card 1 -->
         <div
           class="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20"
@@ -46,8 +46,8 @@
             Utility Commands
           </h3>
           <p class="text-gray-400 leading-relaxed">
-            Ping, user info, server stats, and other essential bot functions to keep your server
-            running smoothly.
+            Essential commands including /ping for response checks, /user-info to display your
+            details, and /server for comprehensive server statistics.
           </p>
 
           <!-- Decorative corner -->
@@ -86,8 +86,8 @@
             Gaming Integration
           </h3>
           <p class="text-gray-400 leading-relaxed">
-            WoW Raider IO stats, Pokemon TCG card lookups, and gaming data to enhance your community
-            experience.
+            Retrieve World of Warcraft character and guild Raider IO stats with /rio command. Search
+            Pokemon TCG cards or get random cards with /pokemon command.
           </p>
 
           <!-- Decorative corner -->
@@ -126,13 +126,53 @@
             Administrator Tools
           </h3>
           <p class="text-gray-400 leading-relaxed">
-            Advanced role-based permission system and moderation tools. Control command access and
-            manage your server effectively.
+            Comprehensive role-based permission system for commands. Set roles with commands like
+            /setcommandrole, manage logging channels, and moderate effectively.
           </p>
 
           <!-- Decorative corner -->
           <div
             class="absolute top-4 right-4 w-20 h-20 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/10 transition-colors duration-300"
+          ></div>
+        </div>
+
+        <!-- Feature Card 4 -->
+        <div
+          class="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-emerald-500 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20"
+        >
+          <!-- Icon container -->
+          <div class="mb-6 relative">
+            <div
+              class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+            >
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <!-- Glow effect -->
+            <div
+              class="absolute inset-0 bg-emerald-500 rounded-xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300"
+            ></div>
+          </div>
+
+          <h3
+            class="text-2xl font-semibold mb-4 text-white group-hover:text-emerald-300 transition-colors duration-300"
+          >
+            Message Logging
+          </h3>
+          <p class="text-gray-400 leading-relaxed">
+            Automated logging system tracking message creations and deletions with detailed embeds.
+            Integrates with audit logs for effective moderation.
+          </p>
+
+          <!-- Decorative corner -->
+          <div
+            class="absolute top-4 right-4 w-20 h-20 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-colors duration-300"
           ></div>
         </div>
       </div>
