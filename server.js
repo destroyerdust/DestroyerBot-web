@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import GuildSettings from './models/GuildSettings.js';
 import GuildCache from './models/GuildCache.js';
+import ChannelCache from './models/ChannelCache.js';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -115,9 +116,91 @@ const getCachedUserGuilds = async (token, userId) => {
   }
 };
 
-// Simple in-memory cache for channel data
-const channelCache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+// Helper function to get guild channels with MongoDB caching
+const getCachedGuildChannels = async (guildId, botToken) => {
+  const CHANNEL_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  
+  try {
+    // Check MongoDB cache first
+    const cached = await ChannelCache.findOne({ guildId });
+    
+    if (cached && Date.now() - new Date(cached.cachedAt).getTime() < CHANNEL_CACHE_TTL) {
+      console.log(`✅ Serving channels from MongoDB cache for guild ${guildId}`);
+      return { channels: cached.channels, fromCache: true };
+    }
+    
+    // Cache miss or expired - fetch from Discord
+    if (!botToken) {
+      console.warn('⚠️  BOT_TOKEN not configured - channel selection will be unavailable');
+      return {
+        channels: [],
+        warning: 'Bot token not configured. Please add BOT_TOKEN to your .env.local file to enable channel selection.'
+      };
+    }
+
+    logDiscordAPICall(`/guilds/${guildId}/channels`, 'GET');
+    const channelsResponse = await fetch(`https://discord.com/api/guilds/${guildId}/channels`, {
+      headers: {
+        Authorization: `Bot ${botToken}`,
+      },
+    });
+    logDiscordAPIResponse(`/guilds/${guildId}/channels`, channelsResponse.status, channelsResponse.headers);
+
+    if (!channelsResponse.ok) {
+      const errorText = await channelsResponse.text();
+      console.error('Failed to fetch channels:', errorText);
+      console.error('Status:', channelsResponse.status);
+      
+      // If rate limited and we have old cache, use it
+      if (channelsResponse.status === 429 && cached) {
+        console.log('⚠️  Rate limited, using stale MongoDB cache');
+        return {
+          channels: cached.channels,
+          warning: 'Using cached data due to rate limiting.'
+        };
+      }
+      
+      return {
+        channels: [],
+        warning: channelsResponse.status === 429 
+          ? 'Rate limited by Discord. Please wait a moment and refresh the page.'
+          : 'Unable to fetch channels. Please ensure the bot is in the guild and has proper permissions.'
+      };
+    }
+
+    const channels = await channelsResponse.json();
+    
+    // Filter for text channels only (type 0 = GUILD_TEXT)
+    const textChannels = channels
+      .filter(channel => channel.type === 0)
+      .map(channel => ({
+        id: channel.id,
+        name: channel.name,
+        position: channel.position
+      }))
+      .sort((a, b) => a.position - b.position);
+
+    // Update cache in MongoDB
+    await ChannelCache.findOneAndUpdate(
+      { guildId },
+      { 
+        guildId,
+        channels: textChannels,
+        cachedAt: new Date()
+      },
+      { upsert: true }
+    );
+    console.log(`✅ Cached channels in MongoDB for guild ${guildId}`);
+    
+    return { channels: textChannels, fromCache: false };
+  } catch (error) {
+    console.error('Error in getCachedGuildChannels:', error);
+    return {
+      channels: [],
+      warning: 'An error occurred while fetching channels.'
+    };
+  }
+};
 
 // Support both dev (5173) and preview (4173) modes
 const ALLOWED_ORIGINS = [
@@ -337,75 +420,14 @@ app.get('/api/guilds/:id/channels', async (req, res) => {
       return res.status(404).json({ error: 'Guild not found or no access' });
     }
 
-    // Check cache first
-    const cached = channelCache.get(id);
-    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-      console.log(`✅ Serving channels from cache for guild ${id}`);
-      return res.status(200).json({ channels: cached.channels });
-    }
-
-    // Fetch channels using bot token
+    // Fetch channels with MongoDB caching
     const botToken = process.env.BOT_TOKEN;
-    
-    if (!botToken) {
-      console.warn('⚠️  BOT_TOKEN not configured - channel selection will be unavailable');
-      return res.status(200).json({ 
-        channels: [],
-        warning: 'Bot token not configured. Please add BOT_TOKEN to your .env.local file to enable channel selection.'
-      });
-    }
+    const channelResult = await getCachedGuildChannels(id, botToken);
 
-    logDiscordAPICall(`/guilds/${id}/channels`, 'GET');
-    const channelsResponse = await fetch(`https://discord.com/api/guilds/${id}/channels`, {
-      headers: {
-        Authorization: `Bot ${botToken}`,
-      },
+    return res.status(200).json({
+      channels: channelResult.channels,
+      ...(channelResult.warning && { warning: channelResult.warning })
     });
-    logDiscordAPIResponse(`/guilds/${id}/channels`, channelsResponse.status, channelsResponse.headers);
-
-    if (!channelsResponse.ok) {
-      const errorText = await channelsResponse.text();
-      console.error('Failed to fetch channels:', errorText);
-      console.error('Status:', channelsResponse.status);
-      
-      // If rate limited and we have old cache, use it
-      if (channelsResponse.status === 429 && cached) {
-        console.log('⚠️  Rate limited, using stale cache');
-        return res.status(200).json({ 
-          channels: cached.channels,
-          warning: 'Using cached data due to rate limiting.'
-        });
-      }
-      
-      // Return empty array with warning instead of error
-      return res.status(200).json({ 
-        channels: [],
-        warning: channelsResponse.status === 429 
-          ? 'Rate limited by Discord. Please wait a moment and refresh the page.'
-          : 'Unable to fetch channels. Please ensure the bot is in the guild and has proper permissions.'
-      });
-    }
-
-    const channels = await channelsResponse.json();
-    
-    // Filter for text channels only (type 0 = GUILD_TEXT)
-    const textChannels = channels
-      .filter(channel => channel.type === 0)
-      .map(channel => ({
-        id: channel.id,
-        name: channel.name,
-        position: channel.position
-      }))
-      .sort((a, b) => a.position - b.position);
-
-    // Cache the result
-    channelCache.set(id, {
-      channels: textChannels,
-      timestamp: Date.now()
-    });
-    console.log(`✅ Cached channels for guild ${id}`);
-
-    return res.status(200).json({ channels: textChannels });
   } catch (error) {
     console.error('Error fetching guild channels:', error);
     return res.status(200).json({ 

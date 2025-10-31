@@ -29,6 +29,79 @@
       </div>
     </nav>
 
+    <!-- Notification Toast -->
+    <transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="transform translate-y-2 opacity-0"
+      enter-to-class="transform translate-y-0 opacity-100"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="transform translate-y-0 opacity-100"
+      leave-to-class="transform translate-y-2 opacity-0"
+    >
+      <div v-if="notification.show" class="fixed top-20 right-4 z-50 max-w-sm w-full">
+        <div
+          :class="[
+            'rounded-lg shadow-lg p-4 flex items-start gap-3',
+            notification.type === 'success'
+              ? 'bg-green-600 border border-green-500'
+              : 'bg-red-600 border border-red-500',
+          ]"
+        >
+          <!-- Icon -->
+          <div class="flex-shrink-0">
+            <svg
+              v-if="notification.type === 'success'"
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <svg
+              v-else
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+
+          <!-- Message -->
+          <div class="flex-1">
+            <p class="text-white font-medium">{{ notification.message }}</p>
+          </div>
+
+          <!-- Close button -->
+          <button
+            @click="notification.show = false"
+            class="flex-shrink-0 text-white hover:text-gray-200 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </transition>
+
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center h-[calc(100vh-4rem)]">
       <div class="text-center">
@@ -467,6 +540,24 @@ const channelSearch = ref('')
 const showChannelDropdown = ref(false)
 const channelWarning = ref('')
 
+// Notification state
+const notification = ref({
+  show: false,
+  message: '',
+  type: 'success', // 'success' or 'error'
+})
+
+const showNotification = (message, type = 'success') => {
+  notification.value.message = message
+  notification.value.type = type
+  notification.value.show = true
+
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    notification.value.show = false
+  }, 3000)
+}
+
 const guildIcon = computed(() => {
   if (guild.value.icon) {
     return `https://cdn.discordapp.com/icons/${guildId}/${guild.value.icon}.png?size=256`
@@ -572,14 +663,13 @@ const saveSettings = async () => {
     })
 
     if (response.ok) {
-      // Show success message (you can add a toast notification here)
-      alert('Settings saved successfully!')
+      showNotification('Settings saved successfully!', 'success')
     } else {
-      alert('Failed to save settings')
+      showNotification('Failed to save settings', 'error')
     }
   } catch (err) {
     console.error('Error saving settings:', err)
-    alert('An error occurred while saving settings')
+    showNotification('An error occurred while saving settings', 'error')
   }
 }
 
