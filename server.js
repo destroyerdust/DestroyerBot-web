@@ -4,12 +4,41 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import GuildSettings from './models/GuildSettings.js';
+import GuildCache from './models/GuildCache.js';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
 
 const app = express();
 const PORT = 3000;
+
+// Debug logging for Discord API calls
+const logDiscordAPICall = (endpoint, method = 'GET') => {
+  console.log(`🔵 Discord API Call: ${method} ${endpoint} at ${new Date().toISOString()}`);
+};
+
+const logDiscordAPIResponse = (endpoint, status, headers) => {
+  const rateLimit = {
+    limit: headers.get('x-ratelimit-limit'),
+    remaining: headers.get('x-ratelimit-remaining'),
+    reset: headers.get('x-ratelimit-reset'),
+    resetAfter: headers.get('x-ratelimit-reset-after'),
+    bucket: headers.get('x-ratelimit-bucket'),
+  };
+  
+  console.log(`📊 Discord API Response: ${endpoint}`);
+  console.log(`   Status: ${status}`);
+  console.log(`   Rate Limit: ${rateLimit.remaining}/${rateLimit.limit} remaining`);
+  if (rateLimit.reset) {
+    const resetDate = new Date(parseInt(rateLimit.reset) * 1000);
+    console.log(`   Resets at: ${resetDate.toISOString()} (in ${rateLimit.resetAfter}s)`);
+  }
+  
+  if (status === 429) {
+    console.error(`❌ RATE LIMITED on ${endpoint}`);
+    console.error(`   Retry after: ${headers.get('retry-after')} seconds`);
+  }
+};
 
 // MongoDB Connection
 const connectDB = async () => {
@@ -24,6 +53,71 @@ const connectDB = async () => {
 
 // Connect to MongoDB
 connectDB();
+
+// Helper function to get user ID from session
+const getUserIdFromSession = (req) => {
+  try {
+    const sessionToken = req.cookies?.discord_session;
+    if (!sessionToken) return null;
+    
+    const userInfo = JSON.parse(Buffer.from(sessionToken, 'base64').toString());
+    return userInfo.id;
+  } catch (error) {
+    console.error('Error parsing session token:', error);
+    return null;
+  }
+};
+
+// Helper function to get user's guilds with MongoDB caching
+const getCachedUserGuilds = async (token, userId) => {
+  const GUILD_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  
+  try {
+    // Check MongoDB cache first
+    const cached = await GuildCache.findOne({ userId });
+    
+    if (cached && Date.now() - new Date(cached.cachedAt).getTime() < GUILD_CACHE_TTL) {
+      console.log(`✅ Serving guilds from MongoDB cache for user ${userId}`);
+      return { guilds: cached.guilds, fromCache: true };
+    }
+    
+    // Cache miss or expired - fetch from Discord
+    logDiscordAPICall('/users/@me/guilds', 'GET');
+    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    logDiscordAPIResponse('/users/@me/guilds', guildsResponse.status, guildsResponse.headers);
+    
+    if (!guildsResponse.ok) {
+      return { error: true, status: guildsResponse.status };
+    }
+    
+    const guilds = await guildsResponse.json();
+    
+    // Update cache in MongoDB
+    await GuildCache.findOneAndUpdate(
+      { userId },
+      { 
+        userId, 
+        guilds,
+        cachedAt: new Date()
+      },
+      { upsert: true }
+    );
+    console.log(`✅ Cached guilds in MongoDB for user ${userId}`);
+    
+    return { guilds, fromCache: false };
+  } catch (error) {
+    console.error('Error in getCachedUserGuilds:', error);
+    return { error: true, message: error.message };
+  }
+};
+
+// Simple in-memory cache for channel data
+const channelCache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Support both dev (5173) and preview (4173) modes
 const ALLOWED_ORIGINS = [
@@ -58,6 +152,7 @@ app.get('/api/auth/discord', async (req, res) => {
 
   try {
     // Exchange code for access token
+    logDiscordAPICall('/oauth2/token', 'POST');
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
@@ -72,6 +167,7 @@ app.get('/api/auth/discord', async (req, res) => {
         scope: 'identify email guilds',
       }),
     });
+    logDiscordAPIResponse('/oauth2/token', tokenResponse.status, tokenResponse.headers);
 
     const tokenData = await tokenResponse.json();
 
@@ -81,11 +177,13 @@ app.get('/api/auth/discord', async (req, res) => {
     }
 
     // Get user information
+    logDiscordAPICall('/users/@me', 'GET');
     const userResponse = await fetch('https://discord.com/api/users/@me', {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
       },
     });
+    logDiscordAPIResponse('/users/@me', userResponse.status, userResponse.headers);
 
     const userData = await userResponse.json();
 
@@ -151,24 +249,21 @@ app.get('/api/auth/discord', async (req, res) => {
 app.get('/api/guilds/:id', async (req, res) => {
   const { id } = req.params;
   const token = req.cookies?.discord_token;
+  const userId = getUserIdFromSession(req);
 
-  if (!token) {
+  if (!token || !userId) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
   try {
-    // Fetch user's guilds to verify access
-    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!guildsResponse.ok) {
-      return res.status(guildsResponse.status).json({ error: 'Failed to fetch guilds' });
+    // Fetch user's guilds with caching
+    const result = await getCachedUserGuilds(token, userId);
+    
+    if (result.error) {
+      return res.status(result.status || 500).json({ error: 'Failed to fetch guilds' });
     }
 
-    const guilds = await guildsResponse.json();
+    const guilds = result.guilds;
     const guild = guilds.find(g => g.id === id);
 
     if (!guild) {
@@ -197,7 +292,8 @@ app.get('/api/guilds/:id', async (req, res) => {
         linkFilter: false,
         logDeletes: false,
         logMembers: false,
-        logModeration: false
+        logModeration: false,
+        logChannelId: null
       };
     }
 
@@ -216,28 +312,128 @@ app.get('/api/guilds/:id', async (req, res) => {
   }
 });
 
-// Save guild settings endpoint
-app.post('/api/guilds/:id/settings', async (req, res) => {
+// Fetch guild channels endpoint
+app.get('/api/guilds/:id/channels', async (req, res) => {
   const { id } = req.params;
   const token = req.cookies?.discord_token;
+  const userId = getUserIdFromSession(req);
 
-  if (!token) {
+  if (!token || !userId) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
   try {
-    // Verify user has access to this guild
-    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!guildsResponse.ok) {
-      return res.status(guildsResponse.status).json({ error: 'Failed to fetch guilds' });
+    // Verify user has access to this guild with caching
+    const result = await getCachedUserGuilds(token, userId);
+    
+    if (result.error) {
+      return res.status(result.status || 500).json({ error: 'Failed to fetch guilds' });
     }
 
-    const guilds = await guildsResponse.json();
+    const guilds = result.guilds;
+    const guild = guilds.find(g => g.id === id);
+
+    if (!guild) {
+      return res.status(404).json({ error: 'Guild not found or no access' });
+    }
+
+    // Check cache first
+    const cached = channelCache.get(id);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      console.log(`✅ Serving channels from cache for guild ${id}`);
+      return res.status(200).json({ channels: cached.channels });
+    }
+
+    // Fetch channels using bot token
+    const botToken = process.env.BOT_TOKEN;
+    
+    if (!botToken) {
+      console.warn('⚠️  BOT_TOKEN not configured - channel selection will be unavailable');
+      return res.status(200).json({ 
+        channels: [],
+        warning: 'Bot token not configured. Please add BOT_TOKEN to your .env.local file to enable channel selection.'
+      });
+    }
+
+    logDiscordAPICall(`/guilds/${id}/channels`, 'GET');
+    const channelsResponse = await fetch(`https://discord.com/api/guilds/${id}/channels`, {
+      headers: {
+        Authorization: `Bot ${botToken}`,
+      },
+    });
+    logDiscordAPIResponse(`/guilds/${id}/channels`, channelsResponse.status, channelsResponse.headers);
+
+    if (!channelsResponse.ok) {
+      const errorText = await channelsResponse.text();
+      console.error('Failed to fetch channels:', errorText);
+      console.error('Status:', channelsResponse.status);
+      
+      // If rate limited and we have old cache, use it
+      if (channelsResponse.status === 429 && cached) {
+        console.log('⚠️  Rate limited, using stale cache');
+        return res.status(200).json({ 
+          channels: cached.channels,
+          warning: 'Using cached data due to rate limiting.'
+        });
+      }
+      
+      // Return empty array with warning instead of error
+      return res.status(200).json({ 
+        channels: [],
+        warning: channelsResponse.status === 429 
+          ? 'Rate limited by Discord. Please wait a moment and refresh the page.'
+          : 'Unable to fetch channels. Please ensure the bot is in the guild and has proper permissions.'
+      });
+    }
+
+    const channels = await channelsResponse.json();
+    
+    // Filter for text channels only (type 0 = GUILD_TEXT)
+    const textChannels = channels
+      .filter(channel => channel.type === 0)
+      .map(channel => ({
+        id: channel.id,
+        name: channel.name,
+        position: channel.position
+      }))
+      .sort((a, b) => a.position - b.position);
+
+    // Cache the result
+    channelCache.set(id, {
+      channels: textChannels,
+      timestamp: Date.now()
+    });
+    console.log(`✅ Cached channels for guild ${id}`);
+
+    return res.status(200).json({ channels: textChannels });
+  } catch (error) {
+    console.error('Error fetching guild channels:', error);
+    return res.status(200).json({ 
+      channels: [],
+      warning: 'An error occurred while fetching channels.'
+    });
+  }
+});
+
+// Save guild settings endpoint
+app.post('/api/guilds/:id/settings', async (req, res) => {
+  const { id } = req.params;
+  const token = req.cookies?.discord_token;
+  const userId = getUserIdFromSession(req);
+
+  if (!token || !userId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+
+  try {
+    // Verify user has access to this guild with caching
+    const result = await getCachedUserGuilds(token, userId);
+    
+    if (result.error) {
+      return res.status(result.status || 500).json({ error: 'Failed to fetch guilds' });
+    }
+
+    const guilds = result.guilds;
     const guild = guilds.find(g => g.id === id);
 
     if (!guild) {
@@ -277,25 +473,21 @@ app.post('/api/guilds/:id/settings', async (req, res) => {
 app.get('/api/guilds', async (req, res) => {
   // Get access token from cookie
   const token = req.cookies?.discord_token;
+  const userId = getUserIdFromSession(req);
 
-  if (!token) {
+  if (!token || !userId) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
   try {
-    // Fetch user's guilds from Discord API
-    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!guildsResponse.ok) {
-      console.error('Failed to fetch guilds:', await guildsResponse.text());
-      return res.status(guildsResponse.status).json({ error: 'Failed to fetch guilds' });
+    // Fetch user's guilds with caching
+    const result = await getCachedUserGuilds(token, userId);
+    
+    if (result.error) {
+      return res.status(result.status || 500).json({ error: 'Failed to fetch guilds' });
     }
 
-    const guilds = await guildsResponse.json();
+    const guilds = result.guilds;
 
     // Filter guilds where user has MANAGE_GUILD permission (0x00000020 = 32)
     // The permissions field is a string representation of a bitfield

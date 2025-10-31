@@ -284,7 +284,85 @@
             Logging
           </h3>
           <div class="space-y-3">
-            <div class="flex items-center justify-between">
+            <!-- Log Channel Selector -->
+            <div>
+              <label class="block text-gray-300 text-sm mb-2">Log Channel</label>
+
+              <!-- Warning Message -->
+              <div
+                v-if="channelWarning"
+                class="mb-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
+              >
+                <div class="flex items-start gap-2">
+                  <svg
+                    class="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                  <p class="text-yellow-200 text-xs">{{ channelWarning }}</p>
+                </div>
+              </div>
+
+              <div class="relative">
+                <div class="flex gap-2">
+                  <input
+                    v-model="channelSearch"
+                    @focus="handleChannelInputFocus"
+                    @blur="handleChannelInputBlur"
+                    @input="showChannelDropdown = true"
+                    type="text"
+                    placeholder="Select a channel..."
+                    :disabled="channels.length === 0"
+                    class="flex-1 px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                  <button
+                    v-if="selectedChannel"
+                    @click="clearChannel"
+                    class="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors"
+                    title="Clear selection"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Dropdown -->
+                <div
+                  v-if="showChannelDropdown && filteredChannels.length > 0"
+                  class="absolute z-10 w-full mt-1 bg-gray-800 border border-purple-500/30 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                >
+                  <button
+                    v-for="channel in filteredChannels"
+                    :key="channel.id"
+                    @mousedown.prevent="selectChannel(channel)"
+                    class="w-full px-4 py-2 text-left text-white hover:bg-purple-600/20 transition-colors flex items-center gap-2"
+                  >
+                    <span class="text-gray-400">#</span>
+                    <span>{{ channel.name }}</span>
+                  </button>
+                </div>
+              </div>
+              <p class="text-gray-500 text-xs mt-1">
+                {{ selectedChannel ? `Selected: #${selectedChannel.name}` : 'No channel selected' }}
+              </p>
+            </div>
+
+            <!-- Logging Options -->
+            <div class="flex items-center justify-between pt-2">
               <span class="text-gray-300">Log message deletes</span>
               <button
                 @click="settings.logDeletes = !settings.logDeletes"
@@ -335,6 +413,7 @@
                 ></span>
               </button>
             </div>
+
             <button
               @click="saveSettings"
               class="w-full px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors mt-4"
@@ -380,13 +459,31 @@ const settings = ref({
   logDeletes: false,
   logMembers: false,
   logModeration: false,
+  logChannelId: null,
 })
+
+const channels = ref([])
+const channelSearch = ref('')
+const showChannelDropdown = ref(false)
+const channelWarning = ref('')
 
 const guildIcon = computed(() => {
   if (guild.value.icon) {
     return `https://cdn.discordapp.com/icons/${guildId}/${guild.value.icon}.png?size=256`
   }
   return null
+})
+
+const selectedChannel = computed(() => {
+  if (!settings.value.logChannelId) return null
+  return channels.value.find(ch => ch.id === settings.value.logChannelId)
+})
+
+const filteredChannels = computed(() => {
+  if (!channelSearch.value) return channels.value
+  return channels.value.filter(channel =>
+    channel.name.toLowerCase().includes(channelSearch.value.toLowerCase())
+  )
 })
 
 const fetchGuildSettings = async () => {
@@ -413,6 +510,54 @@ const fetchGuildSettings = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const fetchGuildChannels = async () => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/guilds/${guildId}/channels`, {
+      credentials: 'include',
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      channels.value = data.channels
+      if (data.warning) {
+        channelWarning.value = data.warning
+        console.warn('Channel fetch warning:', data.warning)
+      }
+    } else if (response.status === 429) {
+      console.warn('Rate limited by Discord API')
+      channelWarning.value = 'Rate limited by Discord. Please wait a moment and refresh the page.'
+    } else {
+      console.error('Failed to fetch channels')
+      channelWarning.value = 'Failed to fetch channels'
+    }
+  } catch (err) {
+    console.error('Error fetching guild channels:', err)
+    channelWarning.value = 'An error occurred while fetching channels'
+  }
+}
+
+const selectChannel = channel => {
+  settings.value.logChannelId = channel.id
+  channelSearch.value = channel.name
+  showChannelDropdown.value = false
+}
+
+const clearChannel = () => {
+  settings.value.logChannelId = null
+  channelSearch.value = ''
+}
+
+const handleChannelInputFocus = () => {
+  showChannelDropdown.value = true
+}
+
+const handleChannelInputBlur = () => {
+  // Delay to allow click on dropdown
+  setTimeout(() => {
+    showChannelDropdown.value = false
+  }, 200)
 }
 
 const saveSettings = async () => {
@@ -446,8 +591,17 @@ const logout = () => {
   window.location.href = 'http://localhost:3000/api/auth/logout'
 }
 
-onMounted(() => {
-  fetchGuildSettings()
+onMounted(async () => {
+  await fetchGuildSettings()
+  await fetchGuildChannels()
+
+  // Initialize channel search with selected channel name
+  if (settings.value.logChannelId && channels.value.length > 0) {
+    const channel = channels.value.find(ch => ch.id === settings.value.logChannelId)
+    if (channel) {
+      channelSearch.value = channel.name
+    }
+  }
 })
 </script>
 

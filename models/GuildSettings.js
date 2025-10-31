@@ -42,6 +42,10 @@ const guildSettingsSchema = new mongoose.Schema({
   logModeration: {
     type: Boolean,
     default: false
+  },
+  logChannelId: {
+    type: String,
+    default: null
   }
 }, {
   timestamps: true
