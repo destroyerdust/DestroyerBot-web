@@ -1,5 +1,9 @@
-export default async function handler(req, res) {
-  const { code } = req.query;
+import { corsMiddleware } from '../lib/cors.js';
+import { setAuthCookies } from '../lib/auth.js';
+import { logDiscordAPICall, logDiscordAPIResponse } from '../lib/discord.js';
+
+async function handler(req, res) {
+  const { code, state } = req.query;
 
   if (!code) {
     return res.status(400).json({ error: 'No code provided' });
@@ -7,6 +11,7 @@ export default async function handler(req, res) {
 
   try {
     // Exchange code for access token
+    logDiscordAPICall('/oauth2/token', 'POST');
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
@@ -21,6 +26,7 @@ export default async function handler(req, res) {
         scope: 'identify email guilds',
       }),
     });
+    logDiscordAPIResponse('/oauth2/token', tokenResponse.status, tokenResponse.headers);
 
     const tokenData = await tokenResponse.json();
 
@@ -30,11 +36,13 @@ export default async function handler(req, res) {
     }
 
     // Get user information
+    logDiscordAPICall('/users/@me', 'GET');
     const userResponse = await fetch('https://discord.com/api/users/@me', {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
       },
     });
+    logDiscordAPIResponse('/users/@me', userResponse.status, userResponse.headers);
 
     const userData = await userResponse.json();
 
@@ -54,21 +62,31 @@ export default async function handler(req, res) {
 
     // Store access token for API calls (encrypted in production)
     const accessToken = tokenData.access_token;
-    
+
     // Create a simple session token (in production, use proper JWT or session management)
     const sessionToken = Buffer.from(JSON.stringify(userInfo)).toString('base64');
 
-    // Set cookie with session data
-    res.setHeader('Set-Cookie', [
-      `discord_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`,
-      `discord_user=${encodeURIComponent(JSON.stringify(userInfo))}; Path=/; SameSite=Lax; Max-Age=604800`,
-      `discord_token=${accessToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`
-    ]);
+    // Set cookie with session data using shared utility
+    setAuthCookies(res, sessionToken, userInfo, accessToken);
 
-    // Redirect to dashboard
-    res.redirect('/dashboard');
+    // Redirect to dashboard - use state parameter (contains origin) or fallback to referer
+    let redirectUrl = 'http://localhost:5173'; // default
+
+    if (state && ['http://localhost:5173', 'http://localhost:4173'].includes(decodeURIComponent(state))) {
+      redirectUrl = decodeURIComponent(state);
+    } else {
+      const referer = req.headers.referer;
+      const origin = referer ? referer.match(/^https?:\/\/[^\/]+/)?.[0] : null;
+      if (origin && ['http://localhost:5173', 'http://localhost:4173'].includes(origin)) {
+        redirectUrl = origin;
+      }
+    }
+
+    res.redirect(`${redirectUrl}/dashboard`);
   } catch (error) {
     console.error('Discord OAuth error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
+
+export default corsMiddleware(handler);
