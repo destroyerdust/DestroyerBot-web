@@ -3,7 +3,7 @@
     <Hero />
     <AboutBot />
     <Features />
-    <CommandShowcase />
+    <Documentation />
     <Footer />
   </div>
 </template>
@@ -12,7 +12,7 @@
 import Hero from './Hero.vue'
 import AboutBot from './AboutBot.vue'
 import Features from './Features.vue'
-import CommandShowcase from './CommandShowcase.vue'
+import Documentation from './Documentation.vue'
 import Footer from './Footer.vue'
 
 export default {
@@ -21,7 +21,7 @@ export default {
     Hero,
     AboutBot,
     Features,
-    CommandShowcase,
+    Documentation,
     Footer,
   },
 }
