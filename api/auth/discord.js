@@ -9,6 +9,20 @@ async function handler(req, res) {
     return res.status(400).json({ error: 'No code provided' });
   }
 
+  // Validate required environment variables
+  const clientId = process.env.DISCORD_CLIENT_ID;
+  const clientSecret = process.env.DISCORD_CLIENT_SECRET;
+  const redirectUri = process.env.DISCORD_REDIRECT_URI;
+
+  if (!clientId || !clientSecret || !redirectUri) {
+    console.error('Missing Discord OAuth environment variables:', {
+      hasClientId: !!clientId,
+      hasClientSecret: !!clientSecret,
+      hasRedirectUri: !!redirectUri
+    });
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
   try {
     // Exchange code for access token
     logDiscordAPICall('/oauth2/token', 'POST');
@@ -18,11 +32,11 @@ async function handler(req, res) {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        client_id: process.env.DISCORD_CLIENT_ID,
-        client_secret: process.env.DISCORD_CLIENT_SECRET,
+        client_id: clientId,
+        client_secret: clientSecret,
         grant_type: 'authorization_code',
         code: code,
-        redirect_uri: process.env.DISCORD_REDIRECT_URI,
+        redirect_uri: redirectUri,
         scope: 'identify email guilds',
       }),
     });
