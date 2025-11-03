@@ -1,4 +1,8 @@
+import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+
+// Load environment variables for serverless functions
+dotenv.config({ path: '.env.local' });
 
 // Global connection cache for serverless environment
 let cachedConnection = null;

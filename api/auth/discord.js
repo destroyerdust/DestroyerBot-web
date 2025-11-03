@@ -1,6 +1,10 @@
+import dotenv from 'dotenv';
 import { corsMiddleware } from '../lib/cors.js';
 import { setAuthCookies } from '../lib/auth.js';
 import { logDiscordAPICall, logDiscordAPIResponse } from '../lib/discord.js';
+
+// Load environment variables for serverless functions
+dotenv.config({ path: '.env.local' });
 
 async function handler(req, res) {
   const { code, state } = req.query;
