@@ -1,40 +1,99 @@
-export default async function handler(req, res) {
-  const { code } = req.query;
+import dotenv from 'dotenv';
+import { corsMiddleware } from '../lib/cors.js';
+import { setAuthCookies } from '../lib/auth.js';
+import { logDiscordAPICall, logDiscordAPIResponse } from '../lib/discord.js';
+
+// Load environment variables for serverless functions
+dotenv.config({ path: '.env.local' });
+
+async function handler(req, res) {
+  const { code, state } = req.query;
 
   if (!code) {
     return res.status(400).json({ error: 'No code provided' });
   }
 
+  // Validate required environment variables
+  const clientId = process.env.DISCORD_CLIENT_ID;
+  const clientSecret = process.env.DISCORD_CLIENT_SECRET;
+  const redirectUri = process.env.DISCORD_REDIRECT_URI;
+
+  if (!clientId || !clientSecret || !redirectUri) {
+    console.error('Missing Discord OAuth environment variables:', {
+      hasClientId: !!clientId,
+      hasClientSecret: !!clientSecret,
+      hasRedirectUri: !!redirectUri
+    });
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
   try {
+    // Debug logging
+    console.log('🔍 Discord OAuth Debug Info:');
+    console.log('  Request Headers:', {
+      host: req.headers.host,
+      origin: req.headers.origin,
+      referer: req.headers.referer
+    });
+    console.log('  Query Params:', { 
+      code: code?.substring(0, 10) + '...', 
+      state 
+    });
+    console.log('  Environment:', {
+      clientId,
+      redirectUri,
+      hasSecret: !!clientSecret
+    });
+
     // Exchange code for access token
+    logDiscordAPICall('/oauth2/token', 'POST');
+    
+    const tokenParams = {
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: redirectUri,
+      scope: 'identify email guilds',
+    };
+    
+    console.log('📤 Token Request:');
+    console.log('  redirect_uri:', redirectUri);
+    
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({
-        client_id: process.env.DISCORD_CLIENT_ID,
-        client_secret: process.env.DISCORD_CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: process.env.DISCORD_REDIRECT_URI,
-        scope: 'identify email guilds',
-      }),
+      body: new URLSearchParams(tokenParams),
     });
+    logDiscordAPIResponse('/oauth2/token', tokenResponse.status, tokenResponse.headers);
 
     const tokenData = await tokenResponse.json();
 
     if (!tokenResponse.ok) {
-      console.error('Token exchange failed:', tokenData);
-      return res.status(400).json({ error: 'Failed to exchange code for token' });
+      console.error('❌ Token Exchange Failed!');
+      console.error('  Status:', tokenResponse.status);
+      console.error('  Response:', JSON.stringify(tokenData, null, 2));
+      console.error('  Sent redirect_uri:', redirectUri);
+      console.error('  💡 Add this URL to Discord OAuth2 Redirects!');
+      return res.status(400).json({ 
+        error: 'Failed to exchange code for token', 
+        details: tokenData,
+        sentRedirectUri: redirectUri
+      });
     }
 
+    console.log('✅ Token exchange successful!');
+
     // Get user information
+    logDiscordAPICall('/users/@me', 'GET');
     const userResponse = await fetch('https://discord.com/api/users/@me', {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
       },
     });
+    logDiscordAPIResponse('/users/@me', userResponse.status, userResponse.headers);
 
     const userData = await userResponse.json();
 
@@ -54,21 +113,39 @@ export default async function handler(req, res) {
 
     // Store access token for API calls (encrypted in production)
     const accessToken = tokenData.access_token;
-    
+
     // Create a simple session token (in production, use proper JWT or session management)
     const sessionToken = Buffer.from(JSON.stringify(userInfo)).toString('base64');
 
-    // Set cookie with session data
-    res.setHeader('Set-Cookie', [
-      `discord_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`,
-      `discord_user=${encodeURIComponent(JSON.stringify(userInfo))}; Path=/; SameSite=Lax; Max-Age=604800`,
-      `discord_token=${accessToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`
-    ]);
+    // Set cookie with session data using shared utility
+    setAuthCookies(res, sessionToken, userInfo, accessToken);
 
-    // Redirect to dashboard
-    res.redirect('/dashboard');
+    // Redirect to dashboard - use state parameter (contains origin from frontend)
+    let redirectUrl = 'http://localhost:3000'; // default fallback
+
+    // Use state parameter which contains window.location.origin from frontend
+    if (state) {
+      const decodedState = decodeURIComponent(state);
+      // Basic validation: must be http/https URL
+      if (decodedState.startsWith('http://') || decodedState.startsWith('https://')) {
+        redirectUrl = decodedState;
+      }
+    } else {
+      // Fallback to referer if state not provided
+      const referer = req.headers.referer;
+      if (referer) {
+        const origin = referer.match(/^https?:\/\/[^\/]+/)?.[0];
+        if (origin) {
+          redirectUrl = origin;
+        }
+      }
+    }
+
+    res.redirect(`${redirectUrl}/dashboard`);
   } catch (error) {
     console.error('Discord OAuth error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
+
+export default corsMiddleware(handler);

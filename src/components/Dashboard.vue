@@ -258,7 +258,7 @@ const loadingGuilds = ref(false)
 
 const discordAuthUrl = computed(() => {
   const clientId = '773000914319048736'
-  const redirectUri = encodeURIComponent('http://localhost:3000/api/auth/discord')
+  const redirectUri = encodeURIComponent(`${window.location.origin}/api/auth/discord`)
   const scope = encodeURIComponent('identify email guilds')
   const state = encodeURIComponent(window.location.origin)
   return `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`
@@ -277,7 +277,7 @@ const userAvatar = computed(() => {
 const fetchGuilds = async () => {
   loadingGuilds.value = true
   try {
-    const response = await fetch('http://localhost:3000/api/guilds', {
+    const response = await fetch('/api/guilds', {
       credentials: 'include',
     })
 
@@ -320,7 +320,7 @@ const navigateToGuild = guildId => {
 }
 
 const logout = () => {
-  window.location.href = 'http://localhost:3000/api/auth/logout'
+  window.location.href = '/api/auth/logout'
 }
 </script>
 
