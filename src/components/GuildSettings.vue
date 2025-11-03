@@ -666,7 +666,7 @@ const fetchGuildSettings = async () => {
   error.value = null
 
   try {
-    const response = await fetch(`http://localhost:3000/api/guilds/${guildId}`, {
+    const response = await fetch(`/api/guilds/${guildId}`, {
       credentials: 'include',
     })
 
@@ -689,7 +689,7 @@ const fetchGuildSettings = async () => {
 
 const fetchGuildChannels = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/api/guilds/${guildId}/channels`, {
+    const response = await fetch(`/api/guilds/${guildId}/channels`, {
       credentials: 'include',
     })
 
@@ -759,7 +759,7 @@ const handleWelcomeChannelInputBlur = () => {
 
 const saveSettings = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/api/guilds/${guildId}/settings`, {
+    const response = await fetch(`/api/guilds/${guildId}/settings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -784,7 +784,7 @@ const goBack = () => {
 }
 
 const logout = () => {
-  window.location.href = 'http://localhost:3000/api/auth/logout'
+  window.location.href = '/api/auth/logout'
 }
 
 onMounted(async () => {
