@@ -87,16 +87,24 @@ async function handler(req, res) {
     // Set cookie with session data using shared utility
     setAuthCookies(res, sessionToken, userInfo, accessToken);
 
-    // Redirect to dashboard - use state parameter (contains origin) or fallback to referer
-    let redirectUrl = 'http://localhost:5173'; // default
+    // Redirect to dashboard - use state parameter (contains origin from frontend)
+    let redirectUrl = 'http://localhost:3000'; // default fallback
 
-    if (state && ['http://localhost:5173', 'http://localhost:4173'].includes(decodeURIComponent(state))) {
-      redirectUrl = decodeURIComponent(state);
+    // Use state parameter which contains window.location.origin from frontend
+    if (state) {
+      const decodedState = decodeURIComponent(state);
+      // Basic validation: must be http/https URL
+      if (decodedState.startsWith('http://') || decodedState.startsWith('https://')) {
+        redirectUrl = decodedState;
+      }
     } else {
+      // Fallback to referer if state not provided
       const referer = req.headers.referer;
-      const origin = referer ? referer.match(/^https?:\/\/[^\/]+/)?.[0] : null;
-      if (origin && ['http://localhost:5173', 'http://localhost:4173'].includes(origin)) {
-        redirectUrl = origin;
+      if (referer) {
+        const origin = referer.match(/^https?:\/\/[^\/]+/)?.[0];
+        if (origin) {
+          redirectUrl = origin;
+        }
       }
     }
 
