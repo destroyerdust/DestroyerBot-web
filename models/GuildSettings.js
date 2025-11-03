@@ -1,5 +1,35 @@
 import mongoose from 'mongoose';
 
+const logSettingsSchema = new mongoose.Schema({
+  channelId: {
+    type: String,
+    default: null,
+  },
+  messageCreate: {
+    type: Boolean,
+    default: true,
+  },
+  messageDelete: {
+    type: Boolean,
+    default: true,
+  },
+})
+
+const welcomeSettingsSchema = new mongoose.Schema({
+  enabled: {
+    type: Boolean,
+    default: false,
+  },
+  channelId: {
+    type: String,
+    default: null,
+  },
+  message: {
+    type: String,
+    default: 'Welcome to the server!',
+  },
+})
+
 const guildSettingsSchema = new mongoose.Schema({
   guildId: {
     type: String,
@@ -46,7 +76,9 @@ const guildSettingsSchema = new mongoose.Schema({
   logChannelId: {
     type: String,
     default: null
-  }
+  },
+    logs: logSettingsSchema,
+    welcome: welcomeSettingsSchema,
 }, {
   timestamps: true
 });

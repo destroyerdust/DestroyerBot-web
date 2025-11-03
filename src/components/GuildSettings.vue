@@ -233,33 +233,91 @@
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Enable welcome messages</span>
               <button
-                @click="settings.welcomeEnabled = !settings.welcomeEnabled"
+                @click="settings.welcome.enabled = !settings.welcome.enabled"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
-                  settings.welcomeEnabled ? 'bg-purple-600' : 'bg-gray-600',
+                  settings.welcome.enabled ? 'bg-purple-600' : 'bg-gray-600',
                 ]"
               >
                 <span
                   :class="[
                     'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.welcomeEnabled ? 'left-7' : 'left-1',
+                    settings.welcome.enabled ? 'left-7' : 'left-1',
                   ]"
                 ></span>
               </button>
             </div>
+
+            <!-- Welcome Channel Selector -->
+            <div>
+              <label class="block text-gray-300 text-sm mb-2">Welcome Channel</label>
+              <div class="relative">
+                <div class="flex gap-2">
+                  <input
+                    v-model="welcomeChannelSearch"
+                    @focus="handleWelcomeChannelInputFocus"
+                    @blur="handleWelcomeChannelInputBlur"
+                    @input="showWelcomeChannelDropdown = true"
+                    type="text"
+                    placeholder="Select a channel..."
+                    :disabled="channels.length === 0 || !settings.welcome.enabled"
+                    class="flex-1 px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                  <button
+                    v-if="selectedWelcomeChannel"
+                    @click="clearWelcomeChannel"
+                    class="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors"
+                    title="Clear selection"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Dropdown -->
+                <div
+                  v-if="showWelcomeChannelDropdown && filteredWelcomeChannels.length > 0"
+                  class="absolute z-10 w-full mt-1 bg-gray-800 border border-purple-500/30 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                >
+                  <button
+                    v-for="channel in filteredWelcomeChannels"
+                    :key="channel.id"
+                    @mousedown.prevent="selectWelcomeChannel(channel)"
+                    class="w-full px-4 py-2 text-left text-white hover:bg-purple-600/20 transition-colors flex items-center gap-2"
+                  >
+                    <span class="text-gray-400">#</span>
+                    <span>{{ channel.name }}</span>
+                  </button>
+                </div>
+              </div>
+              <p class="text-gray-500 text-xs mt-1">
+                {{
+                  selectedWelcomeChannel
+                    ? `Selected: #${selectedWelcomeChannel.name}`
+                    : 'No channel selected'
+                }}
+              </p>
+            </div>
+
             <textarea
-              v-model="settings.welcomeMessage"
-              :disabled="!settings.welcomeEnabled"
+              v-model="settings.welcome.message"
+              :disabled="!settings.welcome.enabled"
               placeholder="Welcome {user} to {server}!"
               class="w-full px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 disabled:opacity-50"
               rows="3"
             ></textarea>
             <button
               @click="saveSettings"
-              :disabled="!settings.welcomeEnabled"
+              :disabled="!settings.welcome.enabled"
               class="w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save Welcome Message
+              Save Welcome Settings
             </button>
           </div>
         </div>
@@ -526,6 +584,11 @@ const settings = ref({
   prefix: '!',
   welcomeEnabled: false,
   welcomeMessage: '',
+  welcome: {
+    enabled: false,
+    channelId: null,
+    message: 'Welcome to the server!',
+  },
   filterProfanity: false,
   antiSpam: false,
   linkFilter: false,
@@ -533,12 +596,21 @@ const settings = ref({
   logMembers: false,
   logModeration: false,
   logChannelId: null,
+  logs: {
+    channelId: null,
+    messageCreate: true,
+    messageDelete: true,
+  },
 })
 
 const channels = ref([])
 const channelSearch = ref('')
 const showChannelDropdown = ref(false)
 const channelWarning = ref('')
+
+// Welcome channel selector
+const welcomeChannelSearch = ref('')
+const showWelcomeChannelDropdown = ref(false)
 
 // Notification state
 const notification = ref({
@@ -570,10 +642,22 @@ const selectedChannel = computed(() => {
   return channels.value.find(ch => ch.id === settings.value.logChannelId)
 })
 
+const selectedWelcomeChannel = computed(() => {
+  if (!settings.value.welcome.channelId) return null
+  return channels.value.find(ch => ch.id === settings.value.welcome.channelId)
+})
+
 const filteredChannels = computed(() => {
   if (!channelSearch.value) return channels.value
   return channels.value.filter(channel =>
     channel.name.toLowerCase().includes(channelSearch.value.toLowerCase())
+  )
+})
+
+const filteredWelcomeChannels = computed(() => {
+  if (!welcomeChannelSearch.value) return channels.value
+  return channels.value.filter(channel =>
+    channel.name.toLowerCase().includes(welcomeChannelSearch.value.toLowerCase())
   )
 })
 
@@ -635,9 +719,20 @@ const selectChannel = channel => {
   showChannelDropdown.value = false
 }
 
+const selectWelcomeChannel = channel => {
+  settings.value.welcome.channelId = channel.id
+  welcomeChannelSearch.value = channel.name
+  showWelcomeChannelDropdown.value = false
+}
+
 const clearChannel = () => {
   settings.value.logChannelId = null
   channelSearch.value = ''
+}
+
+const clearWelcomeChannel = () => {
+  settings.value.welcome.channelId = null
+  welcomeChannelSearch.value = ''
 }
 
 const handleChannelInputFocus = () => {
@@ -648,6 +743,17 @@ const handleChannelInputBlur = () => {
   // Delay to allow click on dropdown
   setTimeout(() => {
     showChannelDropdown.value = false
+  }, 200)
+}
+
+const handleWelcomeChannelInputFocus = () => {
+  showWelcomeChannelDropdown.value = true
+}
+
+const handleWelcomeChannelInputBlur = () => {
+  // Delay to allow click on dropdown
+  setTimeout(() => {
+    showWelcomeChannelDropdown.value = false
   }, 200)
 }
 
@@ -690,6 +796,14 @@ onMounted(async () => {
     const channel = channels.value.find(ch => ch.id === settings.value.logChannelId)
     if (channel) {
       channelSearch.value = channel.name
+    }
+  }
+
+  // Initialize welcome channel search with selected channel name
+  if (settings.value.welcome.channelId && channels.value.length > 0) {
+    const channel = channels.value.find(ch => ch.id === settings.value.welcome.channelId)
+    if (channel) {
+      welcomeChannelSearch.value = channel.name
     }
   }
 })

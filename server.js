@@ -363,21 +363,60 @@ app.get('/api/guilds/:id', async (req, res) => {
 
     // Get stored settings from database or return defaults
     let guildSettingsDoc = await GuildSettings.findOne({ guildId: id });
-    
+
     if (!guildSettingsDoc) {
       // Return default settings if not found
       guildSettingsDoc = {
         prefix: '!',
         welcomeEnabled: false,
         welcomeMessage: '',
+        welcome: {
+          enabled: false,
+          channelId: null,
+          message: 'Welcome to the server!'
+        },
         filterProfanity: false,
         antiSpam: false,
         linkFilter: false,
         logDeletes: false,
         logMembers: false,
         logModeration: false,
-        logChannelId: null
+        logChannelId: null,
+        logs: {
+          channelId: null,
+          messageCreate: true,
+          messageDelete: true
+        }
       };
+    } else {
+      // Migrate old data to new structure if needed
+      let needsMigration = false;
+
+      // Migrate welcome settings
+      if (!guildSettingsDoc.welcome && (guildSettingsDoc.welcomeEnabled !== undefined || guildSettingsDoc.welcomeMessage !== undefined)) {
+        guildSettingsDoc.welcome = {
+          enabled: guildSettingsDoc.welcomeEnabled || false,
+          channelId: null, // Will be set by user
+          message: guildSettingsDoc.welcomeMessage || 'Welcome to the server!'
+        };
+        needsMigration = true;
+      }
+
+      // Migrate log settings
+      if (!guildSettingsDoc.logs) {
+        guildSettingsDoc.logs = {
+          channelId: guildSettingsDoc.logChannelId || null,
+          messageCreate: guildSettingsDoc.logDeletes || false, // Assuming logDeletes was for message events
+          messageDelete: guildSettingsDoc.logDeletes || false
+        };
+        needsMigration = true;
+      }
+
+      // Save migrated data
+      if (needsMigration) {
+        await guildSettingsDoc.save();
+        console.log(`✅ Migrated settings for guild ${id}`);
+      }
     }
 
     return res.status(200).json({ 
