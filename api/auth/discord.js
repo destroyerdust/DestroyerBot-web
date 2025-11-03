@@ -28,30 +28,63 @@ async function handler(req, res) {
   }
 
   try {
+    // Debug logging
+    console.log('🔍 Discord OAuth Debug Info:');
+    console.log('  Request Headers:', {
+      host: req.headers.host,
+      origin: req.headers.origin,
+      referer: req.headers.referer
+    });
+    console.log('  Query Params:', { 
+      code: code?.substring(0, 10) + '...', 
+      state 
+    });
+    console.log('  Environment:', {
+      clientId,
+      redirectUri,
+      hasSecret: !!clientSecret
+    });
+
     // Exchange code for access token
     logDiscordAPICall('/oauth2/token', 'POST');
+    
+    const tokenParams = {
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: redirectUri,
+      scope: 'identify email guilds',
+    };
+    
+    console.log('📤 Token Request:');
+    console.log('  redirect_uri:', redirectUri);
+    
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: redirectUri,
-        scope: 'identify email guilds',
-      }),
+      body: new URLSearchParams(tokenParams),
     });
     logDiscordAPIResponse('/oauth2/token', tokenResponse.status, tokenResponse.headers);
 
     const tokenData = await tokenResponse.json();
 
     if (!tokenResponse.ok) {
-      console.error('Token exchange failed:', tokenData);
-      return res.status(400).json({ error: 'Failed to exchange code for token' });
+      console.error('❌ Token Exchange Failed!');
+      console.error('  Status:', tokenResponse.status);
+      console.error('  Response:', JSON.stringify(tokenData, null, 2));
+      console.error('  Sent redirect_uri:', redirectUri);
+      console.error('  💡 Add this URL to Discord OAuth2 Redirects!');
+      return res.status(400).json({ 
+        error: 'Failed to exchange code for token', 
+        details: tokenData,
+        sentRedirectUri: redirectUri
+      });
     }
+
+    console.log('✅ Token exchange successful!');
 
     // Get user information
     logDiscordAPICall('/users/@me', 'GET');
