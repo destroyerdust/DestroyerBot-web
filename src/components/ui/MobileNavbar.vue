@@ -71,7 +71,7 @@
             <!-- User dropdown menu -->
             <div
               v-if="isUserMenuOpen"
-              class="absolute right-0 mt-2 w-56 bg-black/90 backdrop-blur-md border border-purple-500/20 rounded-lg shadow-xl z-50"
+              class="absolute right-0 mt-2 w-72 bg-black/90 backdrop-blur-md border border-purple-500/20 rounded-lg shadow-xl z-50"
             >
               <div class="p-4 border-b border-purple-500/20">
                 <div class="flex items-center gap-3">
