@@ -218,12 +218,7 @@
             @click="handleQuickAction('docs')"
             class="w-full flex items-center gap-3 p-4 bg-transparent hover:bg-white/10 border border-transparent rounded-lg transition-colors text-gray-400 hover:text-white font-medium"
           >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -333,18 +328,21 @@ const closeDrawer = () => {
   isDrawerOpen.value = false
 }
 
-const navigateToSection = (section) => {
+const navigateToSection = section => {
   activeSection.value = section
   // Handle navigation logic here
   console.log('Navigate to section:', section)
 }
 
-const handleQuickAction = (action) => {
+const handleQuickAction = action => {
   console.log('Quick action:', action)
   // Handle quick actions like opening invite URLs, documentation, etc.
   if (action === 'invite') {
     // Open Discord OAuth invite URL
-    window.open('https://discord.com/oauth2/authorize?client_id=773000914319048736&scope=bot%20applications.commands&permissions=347136', '_blank')
+    window.open(
+      'https://discord.com/oauth2/authorize?client_id=773000914319048736&scope=bot%20applications.commands&permissions=202198145',
+      '_blank'
+    )
   } else if (action === 'docs') {
     // Open documentation
     window.open('https://github.com/destroyerdust/DestroyerBot-web', '_blank')

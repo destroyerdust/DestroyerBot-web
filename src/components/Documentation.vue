@@ -155,7 +155,10 @@
             </div>
 
             <!-- Permissions note -->
-            <div v-if="command.permissions" class="text-xs text-red-300 bg-red-900/20 px-2 py-1 rounded">
+            <div
+              v-if="command.permissions"
+              class="text-xs text-red-300 bg-red-900/20 px-2 py-1 rounded"
+            >
               ⚠️ Requires: {{ command.permissions }}
             </div>
           </div>
@@ -194,16 +197,20 @@
         <h3 class="text-xl font-semibold text-white mb-4">💡 Usage Tips</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-300">
           <div>
-            <strong class="text-purple-400">Slash Commands:</strong> Start with <code class="bg-gray-700 px-1 rounded">/</code> and select from the autocomplete menu
+            <strong class="text-purple-400">Slash Commands:</strong> Start with
+            <code class="bg-gray-700 px-1 rounded">/</code> and select from the autocomplete menu
           </div>
           <div>
-            <strong class="text-blue-400">Permissions:</strong> Some commands require specific roles or server ownership
+            <strong class="text-blue-400">Permissions:</strong> Some commands require specific roles
+            or server ownership
           </div>
           <div>
-            <strong class="text-green-400">Context:</strong> Commands work in both servers and direct messages (where applicable)
+            <strong class="text-green-400">Context:</strong> Commands work in both servers and
+            direct messages (where applicable)
           </div>
           <div>
-            <strong class="text-indigo-400">Help:</strong> Each command shows its own help when you start typing it
+            <strong class="text-indigo-400">Help:</strong> Each command shows its own help when you
+            start typing it
           </div>
         </div>
       </div>
@@ -241,14 +248,15 @@ export default {
         {
           name: 'ping',
           category: 'utility',
-          description: 'Check the bot\'s response time and latency',
+          description: "Check the bot's response time and latency",
           parameters: [],
           examples: ['/ping'],
         },
         {
           name: 'server-info',
           category: 'utility',
-          description: 'Display comprehensive information about this server including member count, channels, roles, and features',
+          description:
+            'Display comprehensive information about this server including member count, channels, roles, and features',
           parameters: [],
           examples: ['/server-info'],
         },
@@ -257,16 +265,20 @@ export default {
           category: 'utility',
           description: 'Display detailed information about yourself or another user',
           parameters: [
-            { name: 'user', description: 'User to get info about (optional)', required: false }
+            { name: 'user', description: 'User to get info about (optional)', required: false },
           ],
           examples: ['/user-info', '/user-info @username'],
         },
         {
           name: 'avatar-info',
           category: 'utility',
-          description: 'Get information about a user\'s avatar and profile picture',
+          description: "Get information about a user's avatar and profile picture",
           parameters: [
-            { name: 'user', description: 'User to get avatar info for (optional)', required: false }
+            {
+              name: 'user',
+              description: 'User to get avatar info for (optional)',
+              required: false,
+            },
           ],
           examples: ['/avatar-info', '/avatar-info @username'],
         },
@@ -275,7 +287,11 @@ export default {
           category: 'utility',
           description: 'Display information about a specific channel',
           parameters: [
-            { name: 'channel', description: 'Channel to get info about (optional)', required: false }
+            {
+              name: 'channel',
+              description: 'Channel to get info about (optional)',
+              required: false,
+            },
           ],
           examples: ['/channel-info', '/channel-info #general'],
         },
@@ -283,9 +299,7 @@ export default {
           name: 'role-info',
           category: 'utility',
           description: 'Get detailed information about a specific role',
-          parameters: [
-            { name: 'role', description: 'Role to get info about', required: true }
-          ],
+          parameters: [{ name: 'role', description: 'Role to get info about', required: true }],
           examples: ['/role-info @Moderator'],
         },
         {
@@ -307,7 +321,7 @@ export default {
           category: 'utility',
           description: 'Delete a specified number of messages from the current channel',
           parameters: [
-            { name: 'amount', description: 'Number of messages to delete (1-100)', required: true }
+            { name: 'amount', description: 'Number of messages to delete (1-100)', required: true },
           ],
           examples: ['/clean 10'],
           permissions: 'Manage Messages permission',
@@ -320,7 +334,7 @@ export default {
           description: 'Remove a member from the server',
           parameters: [
             { name: 'member', description: 'Member to kick', required: true },
-            { name: 'reason', description: 'Reason for kicking (optional)', required: false }
+            { name: 'reason', description: 'Reason for kicking (optional)', required: false },
           ],
           examples: ['/kick @user', '/kick @user Spamming'],
           permissions: 'Kick Members permission',
@@ -328,10 +342,14 @@ export default {
         {
           name: 'setnick',
           category: 'moderation',
-          description: 'Change a member\'s nickname in the server',
+          description: "Change a member's nickname in the server",
           parameters: [
             { name: 'member', description: 'Member whose nickname to change', required: true },
-            { name: 'nickname', description: 'New nickname (leave empty to reset)', required: false }
+            {
+              name: 'nickname',
+              description: 'New nickname (leave empty to reset)',
+              required: false,
+            },
           ],
           examples: ['/setnick @user CoolName', '/setnick @user'],
           permissions: 'Manage Nicknames permission',
@@ -343,7 +361,11 @@ export default {
           category: 'admin',
           description: 'Set the welcome message for new members joining the server',
           parameters: [
-            { name: 'message', description: 'Welcome message with placeholders {user}, {username}, {guild}', required: true }
+            {
+              name: 'message',
+              description: 'Welcome message with placeholders {user}, {username}, {guild}',
+              required: true,
+            },
           ],
           examples: ['/setwelcomemessage Welcome {user} to {guild}!'],
           permissions: 'Manage Guild permission',
@@ -353,7 +375,7 @@ export default {
           category: 'admin',
           description: 'Set the channel where welcome messages will be sent',
           parameters: [
-            { name: 'channel', description: 'Channel for welcome messages', required: true }
+            { name: 'channel', description: 'Channel for welcome messages', required: true },
           ],
           examples: ['/setwelcomechannel #welcome'],
           permissions: 'Manage Guild permission',
@@ -371,7 +393,11 @@ export default {
           category: 'admin',
           description: 'Set the channel where moderation logs will be sent',
           parameters: [
-            { name: 'channel', description: 'Channel for logging moderation actions', required: true }
+            {
+              name: 'channel',
+              description: 'Channel for logging moderation actions',
+              required: true,
+            },
           ],
           examples: ['/setlogchannel #mod-logs'],
           permissions: 'Manage Guild permission',
@@ -390,7 +416,7 @@ export default {
           description: 'Restrict a command to users with a specific role',
           parameters: [
             { name: 'command', description: 'Command to restrict', required: true },
-            { name: 'role', description: 'Role required to use the command', required: true }
+            { name: 'role', description: 'Role required to use the command', required: true },
           ],
           examples: ['/setcommandrole kick @Moderator'],
           permissions: 'Manage Guild permission',
@@ -400,7 +426,7 @@ export default {
           category: 'admin',
           description: 'Remove role restrictions from a command',
           parameters: [
-            { name: 'command', description: 'Command to remove restrictions from', required: true }
+            { name: 'command', description: 'Command to remove restrictions from', required: true },
           ],
           examples: ['/removecommandrole kick'],
           permissions: 'Manage Guild permission',
@@ -417,9 +443,7 @@ export default {
           name: 'togglecommand',
           category: 'admin',
           description: 'Enable or disable a specific command in the server',
-          parameters: [
-            { name: 'command', description: 'Command to toggle', required: true }
-          ],
+          parameters: [{ name: 'command', description: 'Command to toggle', required: true }],
           examples: ['/togglecommand weather'],
           permissions: 'Manage Guild permission',
         },
@@ -439,14 +463,22 @@ export default {
           description: 'Get World of Warcraft character and guild information from Raider.IO',
           parameters: [
             { name: 'subcommand', description: 'character, guild, or affixes', required: true },
-            { name: 'realm', description: 'Character/guild realm (for character/guild subcommands)', required: false },
-            { name: 'name', description: 'Character/guild name (for character/guild subcommands)', required: false },
-            { name: 'region', description: 'Region (us, eu, kr, tw, cn)', required: false }
+            {
+              name: 'realm',
+              description: 'Character/guild realm (for character/guild subcommands)',
+              required: false,
+            },
+            {
+              name: 'name',
+              description: 'Character/guild name (for character/guild subcommands)',
+              required: false,
+            },
+            { name: 'region', description: 'Region (us, eu, kr, tw, cn)', required: false },
           ],
           examples: [
             '/rio character realm "Area 52" name "CharacterName"',
             '/rio guild realm "Area 52" name "GuildName"',
-            '/rio affixes'
+            '/rio affixes',
           ],
         },
 
@@ -457,7 +489,11 @@ export default {
           description: 'Search Pokemon Trading Card Game database',
           parameters: [
             { name: 'subcommand', description: 'search or random', required: true },
-            { name: 'query', description: 'Card name to search for (for search subcommand)', required: false }
+            {
+              name: 'query',
+              description: 'Card name to search for (for search subcommand)',
+              required: false,
+            },
           ],
           examples: ['/pokemon search Charizard', '/pokemon random'],
         },
@@ -468,8 +504,16 @@ export default {
           category: 'weather',
           description: 'Get current weather conditions for any location worldwide',
           parameters: [
-            { name: 'location', description: 'City name (e.g., "New York" or "London, UK")', required: true },
-            { name: 'units', description: 'Temperature units (Celsius, Fahrenheit, Canadian)', required: false }
+            {
+              name: 'location',
+              description: 'City name (e.g., "New York" or "London, UK")',
+              required: true,
+            },
+            {
+              name: 'units',
+              description: 'Temperature units (Celsius, Fahrenheit, Canadian)',
+              required: false,
+            },
           ],
           examples: ['/weather New York', '/weather "London, UK" units Celsius'],
         },
@@ -498,10 +542,11 @@ export default {
       // Filter by search query
       if (this.searchQuery.trim()) {
         const query = this.searchQuery.toLowerCase()
-        filtered = filtered.filter(cmd =>
-          cmd.name.toLowerCase().includes(query) ||
-          cmd.description.toLowerCase().includes(query) ||
-          cmd.category.toLowerCase().includes(query)
+        filtered = filtered.filter(
+          cmd =>
+            cmd.name.toLowerCase().includes(query) ||
+            cmd.description.toLowerCase().includes(query) ||
+            cmd.category.toLowerCase().includes(query)
         )
       }
 

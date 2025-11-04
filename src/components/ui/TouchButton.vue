@@ -11,7 +11,7 @@
       variantClasses,
       sizeClasses,
       fullWidth ? 'w-full' : '',
-      loading ? 'cursor-wait' : 'cursor-pointer'
+      loading ? 'cursor-wait' : 'cursor-pointer',
     ]"
     @click="handleClick"
     @touchstart="handleTouchStart"
@@ -20,14 +20,7 @@
     <!-- Loading spinner -->
     <div v-if="loading" class="w-5 h-5">
       <svg class="animate-spin" fill="none" viewBox="0 0 24 24">
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        />
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path
           class="opacity-75"
           fill="currentColor"
@@ -59,54 +52,54 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: (value) => ['primary', 'secondary', 'danger', 'ghost'].includes(value)
+    validator: value => ['primary', 'secondary', 'danger', 'ghost'].includes(value),
   },
   size: {
     type: String,
     default: 'md',
-    validator: (value) => ['sm', 'md', 'lg'].includes(value)
+    validator: value => ['sm', 'md', 'lg'].includes(value),
   },
   disabled: {
     type: Boolean,
-    default: false
+    default: false,
   },
   loading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   fullWidth: {
     type: Boolean,
-    default: false
+    default: false,
   },
   href: {
     type: String,
-    default: null
+    default: null,
   },
   text: {
     type: String,
-    default: ''
+    default: '',
   },
   icon: {
     type: [Object, Function],
-    default: null
+    default: null,
   },
   iconPosition: {
     type: String,
     default: 'left',
-    validator: (value) => ['left', 'right'].includes(value)
+    validator: value => ['left', 'right'].includes(value),
   },
   ariaLabel: {
     type: String,
-    default: null
+    default: null,
   },
   ariaDescribedBy: {
     type: String,
-    default: null
+    default: null,
   },
   pressDelay: {
     type: Number,
-    default: 150 // ms
-  }
+    default: 150, // ms
+  },
 })
 
 // Emits
@@ -146,13 +139,13 @@ const sizeClasses = computed(() => {
 })
 
 // Methods
-const handleClick = (event) => {
+const handleClick = event => {
   if (props.disabled || props.loading) return
 
   emit('click', event)
 }
 
-const handleTouchStart = (event) => {
+const handleTouchStart = event => {
   if (props.disabled || props.loading) return
 
   isPressed.value = true
@@ -170,7 +163,7 @@ const handleTouchStart = (event) => {
   }, props.pressDelay)
 }
 
-const handleTouchEnd = (event) => {
+const handleTouchEnd = event => {
   if (props.disabled || props.loading) return
 
   isPressed.value = false
