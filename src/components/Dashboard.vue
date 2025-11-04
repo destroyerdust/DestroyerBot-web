@@ -1,23 +1,22 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
-    <!-- Navbar -->
-    <nav class="bg-black/30 backdrop-blur-md border-b border-purple-500/20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <h1 class="text-2xl font-bold text-white">DestroyerBot Dashboard</h1>
-          </div>
-          <div class="flex items-center gap-4">
-            <button
-              @click="logout"
-              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <!-- Mobile Navigation -->
+    <MobileNavbar
+      :user="user"
+      :is-drawer-open="isDrawerOpen"
+      @toggle-drawer="toggleDrawer"
+      @logout="logout"
+    />
+
+    <!-- Mobile Drawer -->
+    <MobileDrawer
+      :is-open="isDrawerOpen"
+      :user="user"
+      :active-section="activeSection"
+      @close="closeDrawer"
+      @navigate="navigateToSection"
+      @quick-action="handleQuickAction"
+    />
 
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center h-[calc(100vh-4rem)]">
@@ -195,49 +194,19 @@
       <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
         <h3 class="text-xl font-bold text-white mb-4">Quick Actions</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button
-            class="flex items-center gap-3 p-4 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 rounded-lg transition-colors"
-          >
-            <svg
-              class="w-6 h-6 text-purple-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-            <span class="text-white font-medium">Add Bot to Server</span>
-          </button>
+          <TouchButton
+            variant="secondary"
+            @click="handleQuickAction('invite')"
+            class="w-full"
+            text="Add Bot to Server"
+          />
 
-          <button
-            class="flex items-center gap-3 p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-lg transition-colors"
-          >
-            <svg
-              class="w-6 h-6 text-blue-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-            <span class="text-white font-medium">Server Settings</span>
-          </button>
+          <TouchButton
+            variant="ghost"
+            @click="handleQuickAction('docs')"
+            class="w-full"
+            text="Documentation"
+          />
         </div>
       </div>
     </div>
@@ -248,6 +217,8 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Cookies from 'js-cookie'
+import MobileNavbar from './ui/MobileNavbar.vue'
+import MobileDrawer from './ui/MobileDrawer.vue'
 
 const router = useRouter()
 
@@ -255,6 +226,10 @@ const user = ref(null)
 const loading = ref(true)
 const guilds = ref([])
 const loadingGuilds = ref(false)
+
+// Mobile navigation state
+const isDrawerOpen = ref(false)
+const activeSection = ref('overview')
 
 const discordAuthUrl = computed(() => {
   const clientId = '773000914319048736'
@@ -321,6 +296,33 @@ const navigateToGuild = guildId => {
 
 const logout = () => {
   window.location.href = '/api/auth/logout'
+}
+
+// Mobile navigation methods
+const toggleDrawer = () => {
+  isDrawerOpen.value = !isDrawerOpen.value
+}
+
+const closeDrawer = () => {
+  isDrawerOpen.value = false
+}
+
+const navigateToSection = (section) => {
+  activeSection.value = section
+  // Handle navigation logic here
+  console.log('Navigate to section:', section)
+}
+
+const handleQuickAction = (action) => {
+  console.log('Quick action:', action)
+  // Handle quick actions like opening invite URLs, documentation, etc.
+  if (action === 'invite') {
+    // Open Discord OAuth invite URL
+    window.open('https://discord.com/oauth2/authorize?client_id=773000914319048736&scope=bot%20applications.commands&permissions=347136', '_blank')
+  } else if (action === 'docs') {
+    // Open documentation
+    window.open('https://github.com/destroyerdust/DestroyerBot-web', '_blank')
+  }
 }
 </script>
 
