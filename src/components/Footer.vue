@@ -6,7 +6,7 @@
   >
     <!-- Background decoration -->
     <div
-      class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"
+      class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-linear-to-r from-transparent via-purple-500/50 to-transparent"
     ></div>
 
     <div class="max-w-6xl mx-auto relative z-10">
@@ -15,7 +15,7 @@
         <!-- Brand section -->
         <div class="text-center md:text-left">
           <h3
-            class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-3"
+            class="text-2xl font-bold bg-linear-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-3"
           >
             DestroyerBot
           </h3>
@@ -116,7 +116,7 @@
       <button
         v-if="showBackToTop"
         @click="scrollToTop"
-        class="fixed bottom-8 right-8 p-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full shadow-2xl hover:shadow-purple-500/50 transform hover:scale-110 transition-all duration-300 z-50 group"
+        class="fixed bottom-8 right-8 p-4 bg-linear-to-r from-purple-500 to-blue-500 text-white rounded-full shadow-2xl hover:shadow-purple-500/50 transform hover:scale-110 transition-all duration-300 z-50 group"
         aria-label="Scroll to top"
       >
         <svg

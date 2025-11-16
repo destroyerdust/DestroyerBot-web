@@ -2,7 +2,7 @@
   <section class="py-20 px-4 bg-gray-900">
     <div class="max-w-6xl mx-auto">
       <h2
-        class="text-5xl font-bold mb-4 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+        class="text-5xl font-bold mb-4 text-center bg-linear-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
       >
         🤖 Complete Command Documentation
       </h2>
@@ -69,7 +69,7 @@
             :class="[
               'relative z-10 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-medium transition-all duration-300 text-xs sm:text-sm group',
               activeCategory === category.id
-                ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30 scale-105'
+                ? 'bg-linear-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30 scale-105'
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white hover:scale-105',
             ]"
           >
@@ -100,11 +100,11 @@
         <div
           v-for="command in filteredCommands"
           :key="command.name"
-          class="group relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300 overflow-hidden"
+          class="group relative bg-linear-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300 overflow-hidden"
         >
           <!-- Glow effect -->
           <div
-            class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/5 group-hover:to-blue-500/5 transition-all duration-300"
+            class="absolute inset-0 bg-linear-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/5 group-hover:to-blue-500/5 transition-all duration-300"
           ></div>
 
           <div class="relative p-6">

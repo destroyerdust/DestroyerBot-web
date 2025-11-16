@@ -1,6 +1,6 @@
 <template>
   <section
-    class="relative flex items-center justify-center min-h-screen overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900"
+    class="relative flex items-center justify-center min-h-screen overflow-hidden bg-linear-to-br from-purple-900 via-blue-900 to-indigo-900"
   >
     <!-- Animated background elements -->
     <div class="absolute inset-0 overflow-hidden">
@@ -22,7 +22,7 @@
         class="backdrop-blur-lg bg-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl border border-white/20 hover:border-white/30 transition-all duration-500 hover:scale-[1.02]"
       >
         <h1
-          class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-purple-300 via-blue-300 to-indigo-300 bg-clip-text text-transparent"
+          class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-linear-to-r from-purple-300 via-blue-300 to-indigo-300 bg-clip-text text-transparent"
         >
           DestroyerBot
         </h1>
@@ -42,7 +42,7 @@
           >
             <!-- Shimmer effect -->
             <div
-              class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/20 to-transparent"
             ></div>
 
             <span class="relative z-10 flex items-center justify-center gap-2">
