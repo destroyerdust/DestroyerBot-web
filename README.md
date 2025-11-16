@@ -87,7 +87,7 @@ DestroyerBot-web/
 │   │   ├── Hero.vue               # Hero section with login button
 │   │   ├── AboutBot.vue           # Bot description
 │   │   ├── Features.vue           # Feature highlights
-│   │   ├── CommandShowcase.vue    # Command categories
+│   │   ├── Documentation.vue      # Complete command documentation
 │   │   ├── Footer.vue             # Footer section
 │   │   └── Dashboard.vue          # User dashboard (authenticated)
 │   │

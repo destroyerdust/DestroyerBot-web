@@ -138,7 +138,7 @@ App.vue
     │   ├── Hero.vue
     │   ├── AboutBot.vue
     │   ├── Features.vue
-    │   ├── CommandShowcase.vue
+    │   ├── Documentation.vue
     │   └── Footer.vue
     │
     └── Dashboard.vue (protected)

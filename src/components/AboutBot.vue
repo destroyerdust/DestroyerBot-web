@@ -182,6 +182,8 @@
               <a
                 href="https://github.com/destroyerdust/DestroyerBot"
                 target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View DestroyerBot source code on GitHub"
                 class="flex items-center gap-3 text-gray-300 hover:text-purple-400 transition-colors duration-300 group"
               >
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -209,8 +211,9 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'AboutBot',
-}
+<script setup>
+/**
+ * AboutBot component
+ * Displays bot description, features, tech stack, and quick links
+ */
 </script>

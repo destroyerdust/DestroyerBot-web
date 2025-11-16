@@ -98,25 +98,14 @@
   </section>
 </template>
 
-<script>
-import { computed } from 'vue'
+<script setup>
+import { useAuth } from '@/composables/useAuth.js'
 
-export default {
-  name: 'Hero',
-  setup() {
-    const discordAuthUrl = computed(() => {
-      const clientId = '773000914319048736'
-      const redirectUri = encodeURIComponent(`${window.location.origin}/api/auth/discord`)
-      const scope = encodeURIComponent('identify email guilds')
-      const state = encodeURIComponent(window.location.origin)
-      return `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`
-    })
-
-    return {
-      discordAuthUrl,
-    }
-  },
-}
+/**
+ * Hero component for the landing page
+ * Displays Discord login button and bot statistics
+ */
+const { discordAuthUrl } = useAuth()
 </script>
 
 <style scoped>
