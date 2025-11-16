@@ -12,13 +12,11 @@
       <!-- Header -->
       <div class="text-center mb-16">
         <h2
-          class="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+          class="text-5xl font-bold mb-4 bg-linear-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
         >
           About DestroyerBot
         </h2>
-        <div
-          class="w-24 h-1 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full"
-        ></div>
+        <div class="w-24 h-1 bg-linear-to-r from-purple-500 to-blue-500 mx-auto rounded-full"></div>
       </div>
 
       <!-- Content Grid -->
@@ -42,7 +40,7 @@
           <div class="space-y-3 mt-8">
             <div class="flex items-start gap-3 group">
               <div
-                class="mt-1 w-6 h-6 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-500/30 transition-colors duration-300"
+                class="mt-1 w-6 h-6 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 group-hover:bg-purple-500/30 transition-colors duration-300"
               >
                 <svg
                   class="w-4 h-4 text-purple-400"
@@ -68,7 +66,7 @@
 
             <div class="flex items-start gap-3 group">
               <div
-                class="mt-1 w-6 h-6 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/30 transition-colors duration-300"
+                class="mt-1 w-6 h-6 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500/30 transition-colors duration-300"
               >
                 <svg
                   class="w-4 h-4 text-blue-400"
@@ -94,7 +92,7 @@
 
             <div class="flex items-start gap-3 group">
               <div
-                class="mt-1 w-6 h-6 rounded-lg bg-indigo-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-500/30 transition-colors duration-300"
+                class="mt-1 w-6 h-6 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0 group-hover:bg-indigo-500/30 transition-colors duration-300"
               >
                 <svg
                   class="w-4 h-4 text-indigo-400"
@@ -124,7 +122,7 @@
         <div class="space-y-6">
           <!-- Tech Stack Card -->
           <div
-            class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10"
+            class="bg-linear-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10"
           >
             <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <svg
@@ -175,7 +173,7 @@
 
           <!-- Quick Links -->
           <div
-            class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-gray-700"
+            class="bg-linear-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-gray-700"
           >
             <h3 class="text-xl font-bold text-white mb-4">Quick Links</h3>
             <div class="space-y-3">
