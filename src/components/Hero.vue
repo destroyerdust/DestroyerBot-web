@@ -38,10 +38,19 @@
         >
           <a
             :href="discordAuthUrl"
-            class="relative px-6 py-3 sm:px-8 sm:py-4 bg-[#5865F2] text-white rounded-xl font-semibold transition-all duration-300 hover:bg-[#4752C4] hover:scale-105 shadow-lg hover:shadow-xl w-full sm:w-auto"
+            class="group relative overflow-hidden px-6 py-3 sm:px-8 sm:py-4 bg-[#5865F2] text-white rounded-xl font-semibold transition-all duration-300 hover:bg-[#4752C4] hover:scale-105 shadow-lg hover:shadow-2xl hover:shadow-[#5865F2]/50 w-full sm:w-auto"
           >
+            <!-- Shimmer effect -->
+            <div
+              class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            ></div>
+
             <span class="relative z-10 flex items-center justify-center gap-2">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-5 h-5 group-hover:rotate-12 transition-transform duration-300"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"
                 />
@@ -53,9 +62,24 @@
           <a
             href="https://github.com/destroyerdust/DestroyerBot"
             target="_blank"
-            class="px-6 py-3 sm:px-8 sm:py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 hover:scale-105 border border-white/20 hover:border-white/40 w-full sm:w-auto text-center"
+            class="group relative px-6 py-3 sm:px-8 sm:py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 hover:scale-105 border border-white/20 hover:border-white/40 hover:shadow-xl w-full sm:w-auto text-center"
           >
-            View Documentation
+            <span class="flex items-center justify-center gap-2">
+              View Documentation
+              <svg
+                class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </span>
           </a>
         </div>
 
@@ -63,17 +87,98 @@
         <div
           class="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6 mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8 border-t border-white/20"
         >
-          <div class="text-center">
-            <div class="text-2xl sm:text-3xl font-bold text-purple-300 mb-1">24/7</div>
-            <div class="text-xs sm:text-sm text-gray-300">Online</div>
+          <div class="group text-center">
+            <div class="relative inline-flex items-center justify-center mb-2">
+              <!-- Icon glow -->
+              <div
+                class="absolute inset-0 bg-purple-500 rounded-full blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300"
+              ></div>
+              <!-- Icon -->
+              <div
+                class="relative w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/20 rounded-full flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 sm:w-6 sm:h-6 text-purple-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="text-2xl sm:text-3xl font-bold text-purple-300 mb-1 animate-count-up">
+              24/7
+            </div>
+            <div class="text-xs sm:text-sm text-gray-300">Always Online</div>
           </div>
-          <div class="text-center">
-            <div class="text-2xl sm:text-3xl font-bold text-blue-300 mb-1">10+</div>
+
+          <div class="group text-center">
+            <div class="relative inline-flex items-center justify-center mb-2">
+              <!-- Icon glow -->
+              <div
+                class="absolute inset-0 bg-blue-500 rounded-full blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300"
+              ></div>
+              <!-- Icon -->
+              <div
+                class="relative w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/20 rounded-full flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 sm:w-6 sm:h-6 text-blue-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="text-2xl sm:text-3xl font-bold text-blue-300 mb-1">
+              <span class="animate-count-up">{{ commandCount }}</span
+              >+
+            </div>
             <div class="text-xs sm:text-sm text-gray-300">Commands</div>
           </div>
-          <div class="text-center">
-            <div class="text-2xl sm:text-3xl font-bold text-indigo-300 mb-1">Fast</div>
-            <div class="text-xs sm:text-sm text-gray-300">Response</div>
+
+          <div class="group text-center">
+            <div class="relative inline-flex items-center justify-center mb-2">
+              <!-- Icon glow -->
+              <div
+                class="absolute inset-0 bg-indigo-500 rounded-full blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300"
+              ></div>
+              <!-- Icon -->
+              <div
+                class="relative w-10 h-10 sm:w-12 sm:h-12 bg-indigo-500/20 rounded-full flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="text-2xl sm:text-3xl font-bold text-indigo-300 mb-1 animate-count-up">
+              &lt;100ms
+            </div>
+            <div class="text-xs sm:text-sm text-gray-300">Response Time</div>
           </div>
         </div>
       </div>
@@ -100,12 +205,16 @@
 
 <script setup>
 import { useAuth } from '@/composables/useAuth.js'
+import { useCountUp } from '@/composables/useCountUp.js'
 
 /**
  * Hero component for the landing page
- * Displays Discord login button and bot statistics
+ * Displays Discord login button and bot statistics with animated counters
  */
 const { discordAuthUrl } = useAuth()
+
+// Animated counter for commands
+const { count: commandCount } = useCountUp(10, 2000, 500)
 </script>
 
 <style scoped>

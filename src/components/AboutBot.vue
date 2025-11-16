@@ -22,7 +22,7 @@
       </div>
 
       <!-- Content Grid -->
-      <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div class="scroll-reveal grid md:grid-cols-2 gap-12 items-center">
         <!-- Left side - Description -->
         <div class="space-y-6">
           <p class="text-lg leading-relaxed text-gray-300">
@@ -212,8 +212,13 @@
 </template>
 
 <script setup>
+import { useScrollReveal } from '@/composables/useScrollReveal.js'
+
 /**
  * AboutBot component
- * Displays bot description, features, tech stack, and quick links
+ * Displays bot description, features, tech stack, and quick links with scroll animations
  */
+
+// Initialize scroll reveal for this component
+useScrollReveal()
 </script>

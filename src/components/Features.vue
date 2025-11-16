@@ -2,12 +2,12 @@
   <section class="py-20 px-4 bg-gray-900 relative overflow-hidden">
     <!-- Background decoration -->
     <div
-      class="absolute inset-0 bg-linear-to-b from-transparent via-purple-900/5 to-transparent"
+      class="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/5 to-transparent"
     ></div>
 
     <div class="max-w-6xl mx-auto relative z-10">
       <h2
-        class="text-5xl font-bold mb-4 text-center bg-linear-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+        class="text-5xl font-bold mb-4 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
       >
         Key Features
       </h2>
@@ -18,12 +18,22 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Feature Card 1 -->
         <div
-          class="group relative bg-linear-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20"
+          :ref="card1.cardRef"
+          @mousemove="card1.handleMouseMove"
+          @mouseleave="card1.handleMouseLeave"
+          :style="card1.tiltStyle.value"
+          :class="{ 'scroll-reveal revealed animate-slide-up': cardsRevealed }"
+          class="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 transform-style-3d"
         >
+          <!-- Glare effect -->
+          <div
+            :style="card1.glareStyle.value"
+            class="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300"
+          ></div>
           <!-- Icon container -->
           <div class="mb-6 relative">
             <div
-              class="w-16 h-16 bg-linear-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
             >
               <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -58,12 +68,22 @@
 
         <!-- Feature Card 2 -->
         <div
-          class="group relative bg-linear-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-blue-500 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
+          :ref="card2.cardRef"
+          @mousemove="card2.handleMouseMove"
+          @mouseleave="card2.handleMouseLeave"
+          :style="card2.tiltStyle.value"
+          :class="{ 'scroll-reveal revealed animate-slide-up animate-delay-100': cardsRevealed }"
+          class="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-blue-500 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20 transform-style-3d"
         >
+          <!-- Glare effect -->
+          <div
+            :style="card2.glareStyle.value"
+            class="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300"
+          ></div>
           <!-- Icon container -->
           <div class="mb-6 relative">
             <div
-              class="w-16 h-16 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
             >
               <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -98,12 +118,22 @@
 
         <!-- Feature Card 3 -->
         <div
-          class="group relative bg-linear-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-indigo-500 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-indigo-500/20"
+          :ref="card3.cardRef"
+          @mousemove="card3.handleMouseMove"
+          @mouseleave="card3.handleMouseLeave"
+          :style="card3.tiltStyle.value"
+          :class="{ 'scroll-reveal revealed animate-slide-up animate-delay-200': cardsRevealed }"
+          class="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-indigo-500 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/20 transform-style-3d"
         >
+          <!-- Glare effect -->
+          <div
+            :style="card3.glareStyle.value"
+            class="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300"
+          ></div>
           <!-- Icon container -->
           <div class="mb-6 relative">
             <div
-              class="w-16 h-16 bg-linear-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
             >
               <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -138,12 +168,22 @@
 
         <!-- Feature Card 4 -->
         <div
-          class="group relative bg-linear-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-emerald-500 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20"
+          :ref="card4.cardRef"
+          @mousemove="card4.handleMouseMove"
+          @mouseleave="card4.handleMouseLeave"
+          :style="card4.tiltStyle.value"
+          :class="{ 'scroll-reveal revealed animate-slide-up animate-delay-300': cardsRevealed }"
+          class="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-emerald-500 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/20 transform-style-3d"
         >
+          <!-- Glare effect -->
+          <div
+            :style="card4.glareStyle.value"
+            class="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300"
+          ></div>
           <!-- Icon container -->
           <div class="mb-6 relative">
             <div
-              class="w-16 h-16 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
             >
               <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -205,9 +245,28 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import { useCardTilt } from '@/composables/useCardTilt.js'
+
 /**
  * Features component
  * Showcases key features of DestroyerBot including utility commands,
- * gaming integration, administrator tools, and message logging
+ * gaming integration, administrator tools, and message logging with 3D tilt effects
  */
+
+// 3D tilt effects for each card
+const card1 = useCardTilt(8)
+const card2 = useCardTilt(8)
+const card3 = useCardTilt(8)
+const card4 = useCardTilt(8)
+
+// Staggered reveal animation
+const cardsRevealed = ref(false)
+
+onMounted(() => {
+  // Trigger staggered entrance animation
+  setTimeout(() => {
+    cardsRevealed.value = true
+  }, 100)
+})
 </script>
