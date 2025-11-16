@@ -569,17 +569,24 @@
 </template>
 
 <script setup>
+/**
+ * GuildSettings component
+ * Comprehensive guild configuration interface for DestroyerBot
+ * Manages welcome messages, logging, and other per-guild settings
+ */
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
 
+// Guild state
 const guildId = route.params.id
 const guild = ref({})
 const loading = ref(true)
 const error = ref(null)
 
+// Guild settings state
 const settings = ref({
   prefix: '!',
   welcomeEnabled: false,
@@ -603,12 +610,11 @@ const settings = ref({
   },
 })
 
+// Channel selection state
 const channels = ref([])
 const channelSearch = ref('')
 const showChannelDropdown = ref(false)
 const channelWarning = ref('')
-
-// Welcome channel selector
 const welcomeChannelSearch = ref('')
 const showWelcomeChannelDropdown = ref(false)
 

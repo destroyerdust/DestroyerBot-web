@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+  <div class="min-h-screen bg-linear-to-br from-gray-900 via-purple-900 to-gray-900">
     <!-- Navbar -->
     <nav class="bg-black/30 backdrop-blur-md border-b border-purple-500/20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -167,7 +167,7 @@
           >
             <div class="flex items-center gap-4">
               <div
-                class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 overflow-hidden"
+                class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center shrink-0 overflow-hidden"
               >
                 <img
                   v-if="getGuildIcon(guild)"
@@ -245,34 +245,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import Cookies from 'js-cookie'
+import { useAuth } from '@/composables/useAuth.js'
 
 const router = useRouter()
 
-const user = ref(null)
-const loading = ref(true)
+// Use auth composable for authentication logic
+const {
+  user,
+  loading,
+  discordAuthUrl,
+  userAvatar,
+  loadUserFromCookie,
+  logout: authLogout,
+} = useAuth()
+
 const guilds = ref([])
 const loadingGuilds = ref(false)
-
-const discordAuthUrl = computed(() => {
-  const clientId = '773000914319048736'
-  const redirectUri = encodeURIComponent(`${window.location.origin}/api/auth/discord`)
-  const scope = encodeURIComponent('identify email guilds')
-  const state = encodeURIComponent(window.location.origin)
-  return `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`
-})
-
-const userAvatar = computed(() => {
-  if (!user.value) return ''
-  if (user.value.avatar) {
-    return `https://cdn.discordapp.com/avatars/${user.value.id}/${user.value.avatar}.png?size=256`
-  }
-  // Default Discord avatar
-  const discriminator = user.value.discriminator || '0'
-  return `https://cdn.discordapp.com/embed/avatars/${parseInt(discriminator) % 5}.png`
-})
 
 const fetchGuilds = async () => {
   loadingGuilds.value = true
@@ -302,17 +292,12 @@ const getGuildIcon = guild => {
 }
 
 onMounted(async () => {
-  // Check for user cookie
-  const userCookie = Cookies.get('discord_user')
-  if (userCookie) {
-    try {
-      user.value = JSON.parse(decodeURIComponent(userCookie))
-      await fetchGuilds()
-    } catch (e) {
-      console.error('Failed to parse user cookie:', e)
-    }
+  // Load user from cookie using composable
+  loadUserFromCookie()
+
+  if (user.value) {
+    await fetchGuilds()
   }
-  loading.value = false
 })
 
 const navigateToGuild = guildId => {
@@ -320,7 +305,7 @@ const navigateToGuild = guildId => {
 }
 
 const logout = () => {
-  window.location.href = '/api/auth/logout'
+  authLogout()
 }
 </script>
 
