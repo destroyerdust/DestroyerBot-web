@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+  <div class="min-h-screen bg-linear-to-br from-gray-900 via-purple-900 to-gray-900">
     <!-- Navbar -->
     <nav class="bg-black/30 backdrop-blur-md border-b border-purple-500/20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,7 +48,7 @@
           ]"
         >
           <!-- Icon -->
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <svg
               v-if="notification.type === 'success'"
               class="w-6 h-6 text-white"
@@ -87,7 +87,7 @@
           <!-- Close button -->
           <button
             @click="notification.show = false"
-            class="flex-shrink-0 text-white hover:text-gray-200 transition-colors"
+            class="shrink-0 text-white hover:text-gray-200 transition-colors"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -141,7 +141,7 @@
       <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6 mb-8">
         <div class="flex items-center gap-6">
           <div
-            class="w-24 h-24 rounded-full bg-purple-500/20 flex items-center justify-center overflow-hidden flex-shrink-0"
+            class="w-24 h-24 rounded-full bg-purple-500/20 flex items-center justify-center overflow-hidden shrink-0"
           >
             <img
               v-if="guildIcon"
@@ -426,7 +426,7 @@
               >
                 <div class="flex items-start gap-2">
                   <svg
-                    class="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5"
+                    class="w-5 h-5 text-yellow-500 shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -559,7 +559,7 @@
       <div class="mt-8 flex justify-center">
         <button
           @click="saveSettings"
-          class="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-colors"
+          class="px-8 py-3 bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-colors"
         >
           Save All Settings
         </button>

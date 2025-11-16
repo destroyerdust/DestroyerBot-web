@@ -12,15 +12,10 @@
 
       <!-- Search Bar -->
       <div class="mb-8">
-        <div class="relative max-w-md mx-auto">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search commands..."
-            class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
-          />
+        <div class="relative max-w-2xl mx-auto">
+          <!-- Search icon (left) -->
           <svg
-            class="absolute right-3 top-3.5 w-5 h-5 text-gray-400"
+            class="absolute left-4 top-3.5 w-5 h-5 text-gray-400 pointer-events-none"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -32,24 +27,72 @@
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
+
+          <!-- Search input -->
+          <input
+            ref="searchInput"
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search commands... (Press / to focus)"
+            aria-label="Search commands"
+            class="w-full px-4 py-3 pl-12 pr-16 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
+          />
+
+          <!-- Keyboard shortcut hint -->
+          <kbd
+            class="absolute right-3 top-2.5 px-2 py-1 bg-gray-700 rounded text-xs text-gray-400 font-mono border border-gray-600"
+          >
+            /
+          </kbd>
+
+          <!-- Result count -->
+          <div
+            v-if="searchQuery"
+            class="mt-2 text-sm text-gray-400 text-center"
+            role="status"
+            aria-live="polite"
+          >
+            Found {{ filteredCommands.length }} command{{
+              filteredCommands.length !== 1 ? 's' : ''
+            }}
+          </div>
         </div>
       </div>
 
       <!-- Category Tabs -->
-      <div class="flex flex-wrap justify-center gap-3 mb-8">
-        <button
-          v-for="category in categories"
-          :key="category.id"
-          @click="activeCategory = category.id"
-          :class="[
-            'px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm',
-            activeCategory === category.id
-              ? 'bg-linear-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white',
-          ]"
-        >
-          {{ category.icon }} {{ category.name }} ({{ getCategoryCommandCount(category.id) }})
-        </button>
+      <div class="mb-8">
+        <div ref="tabsContainerRef" class="relative flex flex-wrap justify-center gap-2 sm:gap-3">
+          <button
+            v-for="category in categories"
+            :key="category.id"
+            @click="setActiveCategory(category.id)"
+            :class="[
+              'relative z-10 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-medium transition-all duration-300 text-xs sm:text-sm group',
+              activeCategory === category.id
+                ? 'bg-linear-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30 scale-105'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white hover:scale-105',
+            ]"
+          >
+            <span class="flex items-center gap-1.5 sm:gap-2">
+              <span
+                class="text-base sm:text-lg group-hover:scale-110 transition-transform duration-300"
+                >{{ category.icon }}</span
+              >
+              <span class="hidden xs:inline">{{ category.name }}</span>
+              <span class="inline xs:hidden">{{ category.name.split(' ')[0] }}</span>
+              <span
+                :class="[
+                  'px-1.5 py-0.5 rounded-full text-xs font-semibold transition-colors duration-300',
+                  activeCategory === category.id
+                    ? 'bg-white/20 text-white'
+                    : 'bg-gray-700 text-gray-500 group-hover:bg-gray-600 group-hover:text-gray-300',
+                ]"
+              >
+                {{ getCategoryCommandCount(category.id) }}
+              </span>
+            </span>
+          </button>
+        </div>
       </div>
 
       <!-- Commands Grid -->
@@ -173,7 +216,7 @@
       </div>
 
       <!-- Statistics -->
-      <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="scroll-reveal mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
         <div class="text-center p-6 bg-gray-800/50 rounded-xl border border-gray-700">
           <div class="text-3xl font-bold text-purple-400 mb-2">{{ totalCommands }}</div>
           <div class="text-sm text-gray-400">Total Commands</div>
@@ -193,7 +236,7 @@
       </div>
 
       <!-- Usage Tips -->
-      <div class="mt-12 bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+      <div class="scroll-reveal mt-12 bg-gray-800/50 rounded-xl p-6 border border-gray-700">
         <h3 class="text-xl font-semibold text-white mb-4">💡 Usage Tips</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-300">
           <div>
@@ -219,22 +262,34 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { COMMAND_CATEGORIES, COMMAND_DOCUMENTATION } from '@/data/documentation.js'
 import { useDebounce } from '@/composables/useDebounce.js'
+import { useScrollReveal } from '@/composables/useScrollReveal.js'
 
 /**
  * Documentation component
  * Comprehensive command documentation with search and category filtering
- * Features debounced search for better performance
+ * Features debounced search for better performance and scroll animations
  */
 
+// Initialize scroll reveal
+useScrollReveal()
+
 const searchQuery = ref('')
+const searchInput = ref(null)
 const activeCategory = ref('all')
 const copiedCommand = ref(null)
+const activeTabRef = ref(null)
+const tabsContainerRef = ref(null)
 
 const categories = COMMAND_CATEGORIES
 const commands = COMMAND_DOCUMENTATION
+
+// Set active category and update indicator position
+const setActiveCategory = categoryId => {
+  activeCategory.value = categoryId
+}
 
 // Debounce search for better performance
 const debouncedSearch = useDebounce(searchQuery, 300)
@@ -280,6 +335,25 @@ const copyCommand = async command => {
     console.error('Failed to copy:', err)
   }
 }
+
+// Keyboard shortcut to focus search (/)
+const handleKeyPress = event => {
+  const target = document.activeElement
+  const isInputField =
+    target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
+  if (event.key === '/' && !isInputField) {
+    event.preventDefault()
+    searchInput.value?.focus()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyPress)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyPress)
+})
 </script>
 
 <style scoped>
