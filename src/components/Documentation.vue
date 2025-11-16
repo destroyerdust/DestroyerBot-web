@@ -262,7 +262,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { COMMAND_CATEGORIES, COMMAND_DOCUMENTATION } from '@/data/documentation.js'
 import { useDebounce } from '@/composables/useDebounce.js'
 import { useScrollReveal } from '@/composables/useScrollReveal.js'
@@ -338,15 +338,16 @@ const copyCommand = async command => {
 
 // Keyboard shortcut to focus search (/)
 const handleKeyPress = event => {
-  if (event.key === '/' && document.activeElement !== searchInput.value) {
+  const target = document.activeElement
+  const isInputField =
+    target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
+  if (event.key === '/' && !isInputField) {
     event.preventDefault()
     searchInput.value?.focus()
   }
 }
 
-import { onMounted as onMountedVue, onUnmounted } from 'vue'
-
-onMountedVue(() => {
+onMounted(() => {
   document.addEventListener('keydown', handleKeyPress)
 })
 
