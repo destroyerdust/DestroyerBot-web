@@ -8,6 +8,7 @@ import { onMounted, onUnmounted } from 'vue'
  */
 export function useScrollReveal(selector = '.scroll-reveal', options = {}) {
   let observer = null
+  let mutationObserver = null
 
   const defaultOptions = {
     threshold: 0.1,
@@ -29,19 +30,40 @@ export function useScrollReveal(selector = '.scroll-reveal', options = {}) {
     })
   }
 
+  const observeElements = () => {
+    const elements = document.querySelectorAll(selector)
+    elements.forEach(el => {
+      // Only observe if not already being observed
+      if (!el.classList.contains('revealed') && !el.dataset.observing) {
+        el.dataset.observing = 'true'
+        observer.observe(el)
+      }
+    })
+  }
+
   onMounted(() => {
     observer = new IntersectionObserver(handleIntersect, defaultOptions)
 
-    // Observe all elements matching the selector
-    const elements = document.querySelectorAll(selector)
-    elements.forEach(el => {
-      observer.observe(el)
+    // Initial observation
+    observeElements()
+
+    // Watch for new elements being added to the DOM
+    mutationObserver = new MutationObserver(() => {
+      observeElements()
+    })
+
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
     })
   })
 
   onUnmounted(() => {
     if (observer) {
       observer.disconnect()
+    }
+    if (mutationObserver) {
+      mutationObserver.disconnect()
     }
   })
 }
