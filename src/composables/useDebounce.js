@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
 /**
  * Debounces a reactive value
@@ -29,6 +29,12 @@ export function useDebounce(value, delay = 300) {
     timeout = setTimeout(() => {
       debouncedValue.value = newValue
     }, delay)
+  })
+
+  onMounted(() => {
+    if (timeout) {
+      clearTimeout(timeout)
+    }
   })
 
   return debouncedValue

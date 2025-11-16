@@ -28,7 +28,8 @@ export function useAuth() {
       redirect_uri: `${window.location.origin}/api/auth/discord`,
       response_type: 'code',
       scope: 'identify email guilds',
-      state: window.location.origin,
+      // TODO: generate a cryptographically random state tied to the user session
+      state: window.location.origin, // placeholder until proper CSRF state handling is wired up
     })
 
     return `https://discord.com/api/oauth2/authorize?${params.toString()}`
