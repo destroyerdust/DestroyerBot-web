@@ -594,7 +594,7 @@ const cardRefs = ref([])
         <!-- Shimmer effect -->
         <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full
                     transition-transform duration-1000
-                    bg-gradient-to-r from-transparent via-white/20 to-transparent">
+                    bg-linear-to-r from-transparent via-white/20 to-transparent">
         </div>
         <span class="relative z-10">Save</span>
       </button>
@@ -715,7 +715,7 @@ const saveSettings = async () => {
     <!-- Shimmer effect on hover -->
     <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full
                 transition-transform duration-1000
-                bg-gradient-to-r from-transparent via-white/20 to-transparent">
+                bg-linear-to-r from-transparent via-white/20 to-transparent">
     </div>
 
     <!-- Button content with conditional states -->
