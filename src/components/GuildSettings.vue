@@ -516,18 +516,39 @@
 
             <!-- Logging Options -->
             <div class="flex items-center justify-between pt-2">
-              <span class="text-gray-300">Log message deletes</span>
+              <span class="text-gray-300">Log message creates</span>
               <button
-                @click="settings.logDeletes = !settings.logDeletes"
+                @click="settings.logs.messageCreate = !settings.logs.messageCreate"
+                :disabled="!settings.logs.enabled"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
-                  settings.logDeletes ? 'bg-green-600' : 'bg-gray-600',
+                  settings.logs.messageCreate ? 'bg-green-600' : 'bg-gray-600',
+                  !settings.logs.enabled && 'opacity-50 cursor-not-allowed',
                 ]"
               >
                 <span
                   :class="[
                     'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.logDeletes ? 'left-7' : 'left-1',
+                    settings.logs.messageCreate ? 'left-7' : 'left-1',
+                  ]"
+                ></span>
+              </button>
+            </div>
+            <div class="flex items-center justify-between pt-2">
+              <span class="text-gray-300">Log message deletes</span>
+              <button
+                @click="settings.logs.messageDelete = !settings.logs.messageDelete"
+                :disabled="!settings.logs.enabled"
+                :class="[
+                  'relative w-12 h-6 rounded-full transition-colors',
+                  settings.logs.messageDelete ? 'bg-green-600' : 'bg-gray-600',
+                  !settings.logs.enabled && 'opacity-50 cursor-not-allowed',
+                ]"
+              >
+                <span
+                  :class="[
+                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
+                    settings.logs.messageDelete ? 'left-7' : 'left-1',
                   ]"
                 ></span>
               </button>
