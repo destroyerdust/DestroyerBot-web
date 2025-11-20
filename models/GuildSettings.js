@@ -65,10 +65,6 @@ const guildSettingsSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  logDeletes: {
-    type: Boolean,
-    default: false
-  },
   logMembers: {
     type: Boolean,
     default: false
