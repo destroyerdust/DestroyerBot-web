@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-linear-to-br from-gray-900 via-purple-900 to-gray-900">
+  <div class="min-h-screen bg-neutral-950 text-neutral-100">
     <!-- Navbar -->
-    <nav class="bg-black/30 backdrop-blur-md border-b border-purple-500/20">
+    <nav class="bg-neutral-900/70 backdrop-blur-md border-b border-neutral-700/40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
@@ -11,7 +11,7 @@
             <button
               @click="logout"
               aria-label="Logout from dashboard"
-              class="relative overflow-hidden group px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-red-500/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+              class="relative overflow-hidden group px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-red-500/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
             >
               <span class="relative z-10">Logout</span>
               <!-- Shimmer effect on hover -->
@@ -34,7 +34,7 @@
     >
       <div class="text-center">
         <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"
+          class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-neutral-400 border-t-transparent"
           aria-hidden="true"
         ></div>
         <p class="text-white mt-4">Loading...</p>
@@ -64,7 +64,7 @@
     <div v-else class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- User Profile Card -->
       <div
-        class="scroll-reveal bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6 mb-8 hover:border-purple-500/40 transition-all duration-500"
+        class="scroll-reveal bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6 mb-8 hover:border-neutral-600/60 transition-all duration-500"
       >
         <div class="flex items-center gap-6">
           <!-- Avatar with glow effect -->
@@ -72,11 +72,11 @@
             <img
               :src="userAvatar"
               :alt="user.username"
-              class="w-24 h-24 rounded-full border-4 border-purple-500 transition-all duration-300 group-hover:border-purple-400 group-hover:scale-105"
+              class="w-24 h-24 rounded-full border-4 border-neutral-400 transition-all duration-300 group-hover:border-neutral-300 group-hover:scale-105"
             />
             <!-- Glow ring on hover -->
             <div
-              class="absolute inset-0 rounded-full bg-purple-500 blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-300 -z-10"
+              class="absolute inset-0 rounded-full bg-neutral-400 blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300 -z-10"
             ></div>
           </div>
 
@@ -100,7 +100,7 @@
         <h2 id="stats-heading" class="sr-only">Dashboard Statistics</h2>
 
         <div
-          class="scroll-reveal bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6 hover:border-purple-500/30 transition-all duration-300"
+          class="scroll-reveal bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6 hover:border-neutral-700/50 transition-all duration-300"
           role="region"
           aria-label="Server count statistic"
         >
@@ -112,10 +112,10 @@
             <!-- Icon with glow -->
             <div class="relative group">
               <div
-                class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-purple-500/30"
+                class="w-12 h-12 bg-neutral-700/40 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-neutral-700/50"
               >
                 <svg
-                  class="w-6 h-6 text-purple-400 transition-colors duration-300 group-hover:text-purple-300"
+                  class="w-6 h-6 text-neutral-200 transition-colors duration-300 group-hover:text-neutral-100"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -130,14 +130,14 @@
               </div>
               <!-- Glow effect on hover -->
               <div
-                class="absolute inset-0 bg-purple-500 rounded-lg blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-300 -z-10"
+                class="absolute inset-0 bg-neutral-500 rounded-lg blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-300 -z-10"
               ></div>
             </div>
           </div>
         </div>
 
         <div
-          class="scroll-reveal animate-delay-100 bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6 hover:border-purple-500/30 transition-all duration-300"
+          class="scroll-reveal animate-delay-100 bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6 hover:border-neutral-700/50 transition-all duration-300"
           role="region"
           aria-label="Commands used statistic"
         >
@@ -149,10 +149,10 @@
             <!-- Icon with glow -->
             <div class="relative group">
               <div
-                class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-blue-500/30"
+                class="w-12 h-12 bg-neutral-700/40 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-neutral-700/50"
               >
                 <svg
-                  class="w-6 h-6 text-blue-400 transition-colors duration-300 group-hover:text-blue-300"
+                  class="w-6 h-6 text-neutral-200 transition-colors duration-300 group-hover:text-neutral-100"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -167,14 +167,14 @@
               </div>
               <!-- Glow effect on hover -->
               <div
-                class="absolute inset-0 bg-blue-500 rounded-lg blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-300 -z-10"
+                class="absolute inset-0 bg-neutral-500 rounded-lg blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-300 -z-10"
               ></div>
             </div>
           </div>
         </div>
 
         <div
-          class="scroll-reveal animate-delay-200 bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6 hover:border-purple-500/30 transition-all duration-300"
+          class="scroll-reveal animate-delay-200 bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6 hover:border-neutral-700/50 transition-all duration-300"
           role="region"
           aria-label="Premium status statistic"
         >
@@ -214,7 +214,7 @@
       <!-- Servers List -->
       <section
         aria-labelledby="servers-heading"
-        class="scroll-reveal animate-delay-300 bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6 mb-8"
+        class="scroll-reveal animate-delay-300 bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6 mb-8"
       >
         <h3 id="servers-heading" class="text-xl font-bold text-white mb-4">
           Your Servers (Manage Permission)
@@ -231,17 +231,17 @@
           <div
             v-for="i in 6"
             :key="i"
-            class="bg-black/30 border border-purple-500/20 rounded-lg p-4 overflow-hidden relative"
+            class="bg-neutral-900/70 border border-neutral-700/40 rounded-lg p-4 overflow-hidden relative"
           >
             <div class="flex items-center gap-4">
               <!-- Avatar skeleton -->
-              <div class="w-16 h-16 rounded-full bg-purple-500/20 animate-pulse"></div>
+              <div class="w-16 h-16 rounded-full bg-neutral-700/40 animate-pulse"></div>
 
               <!-- Text skeleton -->
               <div class="flex-1 space-y-3">
-                <div class="h-4 bg-purple-500/20 rounded w-3/4 animate-pulse"></div>
+                <div class="h-4 bg-neutral-700/40 rounded w-3/4 animate-pulse"></div>
                 <div
-                  class="h-3 bg-purple-500/20 rounded w-1/2 animate-pulse"
+                  class="h-3 bg-neutral-700/40 rounded w-1/2 animate-pulse"
                   style="animation-delay: 150ms"
                 ></div>
               </div>
@@ -258,10 +258,10 @@
         <div v-else-if="guilds.length === 0" class="text-center py-12">
           <!-- Icon -->
           <div
-            class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-purple-500/20 mb-6"
+            class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-neutral-700/40 mb-6"
           >
             <svg
-              class="w-10 h-10 text-purple-400"
+              class="w-10 h-10 text-neutral-200"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -287,7 +287,7 @@
             href="https://discord.com/api/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&scope=bot%20applications.commands"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-neutral-700/40 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
             aria-label="Add DestroyerBot to a Discord server"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,7 +323,7 @@
             role="button"
             :aria-label="`Configure ${guild.name} server settings`"
             tabindex="0"
-            class="relative bg-black/30 border border-purple-500/20 rounded-lg p-4 hover:border-purple-500/40 hover:bg-black/40 transition-all duration-300 cursor-pointer transform-style-3d hover:shadow-xl hover:shadow-purple-500/20 scroll-reveal focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            class="relative bg-neutral-900/70 border border-neutral-700/40 rounded-lg p-4 hover:border-neutral-600/60 hover:bg-neutral-900/60 transition-all duration-300 cursor-pointer transform-style-3d hover:shadow-xl hover:shadow-neutral-800/20 scroll-reveal focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
             :class="`animate-delay-${Math.min(index * 100, 500)}`"
           >
             <!-- Glare overlay effect -->
@@ -337,7 +337,7 @@
               <!-- Guild icon with status indicator -->
               <div class="relative">
                 <div
-                  class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center shrink-0 overflow-hidden"
+                  class="w-16 h-16 rounded-full bg-neutral-700/40 flex items-center justify-center shrink-0 overflow-hidden"
                 >
                   <img
                     v-if="getGuildIcon(guild)"
@@ -345,7 +345,7 @@
                     :alt="guild.name"
                     class="w-full h-full object-cover"
                   />
-                  <span v-else class="text-2xl font-bold text-purple-400">
+                  <span v-else class="text-2xl font-bold text-neutral-200">
                     {{ guild.name.charAt(0).toUpperCase() }}
                   </span>
                 </div>
@@ -372,16 +372,16 @@
 
       <!-- Quick Actions -->
       <section
-        class="scroll-reveal animate-delay-400 bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6"
+        class="scroll-reveal animate-delay-400 bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6"
       >
         <h3 class="text-xl font-bold text-white mb-4">Quick Actions</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
             aria-label="Add DestroyerBot to a new server"
-            class="relative overflow-hidden group flex items-center gap-3 p-4 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 rounded-lg transition-all duration-300 hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            class="relative overflow-hidden group flex items-center gap-3 p-4 bg-neutral-800/40 hover:bg-neutral-700/40 border border-neutral-700/50 rounded-lg transition-all duration-300 hover:border-neutral-400/50 hover:shadow-lg hover:shadow-neutral-800/30 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
           >
             <svg
-              class="w-6 h-6 text-purple-400 transition-transform duration-300 group-hover:scale-110"
+              class="w-6 h-6 text-neutral-200 transition-transform duration-300 group-hover:scale-110"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -402,10 +402,10 @@
 
           <button
             aria-label="View server settings"
-            class="relative overflow-hidden group flex items-center gap-3 p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-lg transition-all duration-300 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            class="relative overflow-hidden group flex items-center gap-3 p-4 bg-neutral-800/40 hover:bg-neutral-700/40 border border-neutral-700/50 rounded-lg transition-all duration-300 hover:border-neutral-400/50 hover:shadow-lg hover:shadow-neutral-800/30 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
           >
             <svg
-              class="w-6 h-6 text-blue-400 transition-transform duration-300 group-hover:scale-110"
+              class="w-6 h-6 text-neutral-200 transition-transform duration-300 group-hover:scale-110"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
