@@ -557,9 +557,11 @@
               <span class="text-gray-300">Log member joins/leaves</span>
               <button
                 @click="settings.logMembers = !settings.logMembers"
+                disabled
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
                   settings.logMembers ? 'bg-green-600' : 'bg-gray-600',
+                  'opacity-50 cursor-not-allowed',
                 ]"
               >
                 <span
@@ -574,9 +576,11 @@
               <span class="text-gray-300">Log moderation actions</span>
               <button
                 @click="settings.logModeration = !settings.logModeration"
+                disabled
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
                   settings.logModeration ? 'bg-green-600' : 'bg-gray-600',
+                  'opacity-50 cursor-not-allowed',
                 ]"
               >
                 <span
