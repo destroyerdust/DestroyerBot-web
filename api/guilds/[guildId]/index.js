@@ -62,7 +62,6 @@ async function handler(req, res) {
         logDeletes: false,
         logMembers: false,
         logModeration: false,
-        logChannelId: null,
         logs: {
           channelId: null,
           messageCreate: true,

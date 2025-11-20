@@ -73,10 +73,6 @@ const guildSettingsSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  logChannelId: {
-    type: String,
-    default: null
-  },
     logs: logSettingsSchema,
     welcome: welcomeSettingsSchema,
 }, {

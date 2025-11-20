@@ -455,7 +455,7 @@
                     class="flex-1 px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <button
-                    v-if="selectedChannel"
+                    v-if="selectedLogsChannel"
                     @click="clearChannel"
                     class="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors"
                     title="Clear selection"
@@ -473,11 +473,11 @@
 
                 <!-- Dropdown -->
                 <div
-                  v-if="showChannelDropdown && filteredChannels.length > 0"
+                  v-if="showChannelDropdown && filteredLogsChannels.length > 0"
                   class="absolute z-10 w-full mt-1 bg-gray-800 border border-purple-500/30 rounded-lg shadow-lg max-h-48 overflow-y-auto"
                 >
                   <button
-                    v-for="channel in filteredChannels"
+                    v-for="channel in filteredLogsChannels"
                     :key="channel.id"
                     @mousedown.prevent="selectChannel(channel)"
                     class="w-full px-4 py-2 text-left text-white hover:bg-purple-600/20 transition-colors flex items-center gap-2"
@@ -488,7 +488,11 @@
                 </div>
               </div>
               <p class="text-gray-500 text-xs mt-1">
-                {{ selectedChannel ? `Selected: #${selectedChannel.name}` : 'No channel selected' }}
+                {{
+                  selectedLogsChannel
+                    ? `Selected: #${selectedLogsChannel.name}`
+                    : 'No channel selected'
+                }}
               </p>
             </div>
 
@@ -602,7 +606,6 @@ const settings = ref({
   logDeletes: false,
   logMembers: false,
   logModeration: false,
-  logChannelId: null,
   logs: {
     channelId: null,
     messageCreate: true,
@@ -643,9 +646,9 @@ const guildIcon = computed(() => {
   return null
 })
 
-const selectedChannel = computed(() => {
-  if (!settings.value.logChannelId) return null
-  return channels.value.find(ch => ch.id === settings.value.logChannelId)
+const selectedLogsChannel = computed(() => {
+  if (!settings.value.logs.channelId) return null
+  return channels.value.find(ch => ch.id === settings.value.logs.channelId)
 })
 
 const selectedWelcomeChannel = computed(() => {
@@ -653,7 +656,7 @@ const selectedWelcomeChannel = computed(() => {
   return channels.value.find(ch => ch.id === settings.value.welcome.channelId)
 })
 
-const filteredChannels = computed(() => {
+const filteredLogsChannels = computed(() => {
   if (!channelSearch.value) return channels.value
   return channels.value.filter(channel =>
     channel.name.toLowerCase().includes(channelSearch.value.toLowerCase())
@@ -720,7 +723,7 @@ const fetchGuildChannels = async () => {
 }
 
 const selectChannel = channel => {
-  settings.value.logChannelId = channel.id
+  settings.value.logs.channelId = channel.id
   channelSearch.value = channel.name
   showChannelDropdown.value = false
 }
@@ -732,7 +735,7 @@ const selectWelcomeChannel = channel => {
 }
 
 const clearChannel = () => {
-  settings.value.logChannelId = null
+  settings.value.logs.channelId = null
   channelSearch.value = ''
 }
 
@@ -798,8 +801,8 @@ onMounted(async () => {
   await fetchGuildChannels()
 
   // Initialize channel search with selected channel name
-  if (settings.value.logChannelId && channels.value.length > 0) {
-    const channel = channels.value.find(ch => ch.id === settings.value.logChannelId)
+  if (settings.value.logs.channelId && channels.value.length > 0) {
+    const channel = channels.value.find(ch => ch.id === settings.value.logs.channelId)
     if (channel) {
       channelSearch.value = channel.name
     }

@@ -378,14 +378,13 @@ app.get('/api/guilds/:id', async (req, res) => {
         filterProfanity: false,
         antiSpam: false,
         linkFilter: false,
-        logDeletes: false,
-        logMembers: false,
-        logModeration: false,
-        logChannelId: null,
-        logs: {
-          channelId: null,
-          messageCreate: true,
-          messageDelete: true
+      logDeletes: false,
+      logMembers: false,
+      logModeration: false,
+      logs: {
+        channelId: null,
+        messageCreate: true,
+        messageDelete: true
         }
       };
     } else {
