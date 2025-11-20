@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.{js,vue,css,html}\"",
-    "format:check": "prettier --check \"src/**/*.{js,vue,css,html}\""
+    "format:check": "prettier --check \"src/**/*.{js,vue,css,html}\"",
+    "vercel-dev": "vercel dev"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",

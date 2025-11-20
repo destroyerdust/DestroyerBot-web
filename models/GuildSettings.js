@@ -45,14 +45,6 @@ const guildSettingsSchema = new mongoose.Schema({
     type: String,
     default: '!'
   },
-  welcomeEnabled: {
-    type: Boolean,
-    default: false
-  },
-  welcomeMessage: {
-    type: String,
-    default: ''
-  },
   filterProfanity: {
     type: Boolean,
     default: false
@@ -73,8 +65,8 @@ const guildSettingsSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-    logs: logSettingsSchema,
-    welcome: welcomeSettingsSchema,
+  logs: logSettingsSchema,
+  welcome: welcomeSettingsSchema,
 }, {
   timestamps: true
 });
