@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-neutral-950 text-neutral-100">
+  <div class="min-h-screen bg-linear-to-br from-gray-900 via-purple-900 to-gray-900">
     <!-- Navbar -->
-    <nav class="bg-neutral-900/70 backdrop-blur-md border-b border-neutral-700/40">
+    <nav class="bg-black/30 backdrop-blur-md border-b border-purple-500/20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center gap-4">
@@ -20,14 +20,9 @@
           <div class="flex items-center gap-4">
             <button
               @click="logout"
-              aria-label="Logout from dashboard"
-              class="relative overflow-hidden group px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-red-500/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
+              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
             >
-              <span class="relative z-10">Logout</span>
-              <!-- Shimmer effect on hover -->
-              <div
-                class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/20 to-transparent"
-              ></div>
+              Logout
             </button>
           </div>
         </div>
@@ -111,7 +106,7 @@
     <div v-if="loading" class="flex items-center justify-center h-[calc(100vh-4rem)]">
       <div class="text-center">
         <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-neutral-400 border-t-transparent"
+          class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"
         ></div>
         <p class="text-white mt-4">Loading guild settings...</p>
       </div>
@@ -133,7 +128,7 @@
         <h2 class="text-2xl font-bold text-white mb-2">{{ error }}</h2>
         <button
           @click="goBack"
-          class="mt-4 px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg transition-colors"
+          class="mt-4 px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
         >
           Go Back to Dashboard
         </button>
@@ -143,12 +138,10 @@
     <!-- Guild Settings Content -->
     <div v-else class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Guild Header -->
-      <div
-        class="bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6 mb-8"
-      >
+      <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6 mb-8">
         <div class="flex items-center gap-6">
           <div
-            class="w-24 h-24 rounded-full bg-neutral-700/40 flex items-center justify-center overflow-hidden shrink-0"
+            class="w-24 h-24 rounded-full bg-purple-500/20 flex items-center justify-center overflow-hidden shrink-0"
           >
             <img
               v-if="guildIcon"
@@ -156,7 +149,7 @@
               :alt="guild.name"
               class="w-full h-full object-cover"
             />
-            <span v-else class="text-4xl font-bold text-neutral-200">
+            <span v-else class="text-4xl font-bold text-purple-400">
               {{ guild.name.charAt(0).toUpperCase() }}
             </span>
           </div>
@@ -170,10 +163,7 @@
               >
                 Owner
               </span>
-              <span
-                v-else
-                class="px-3 py-1 bg-neutral-700/40 text-neutral-200 text-sm rounded-full"
-              >
+              <span v-else class="px-3 py-1 bg-purple-500/20 text-purple-400 text-sm rounded-full">
                 Manager
               </span>
             </div>
@@ -184,10 +174,10 @@
       <!-- Bot Settings Sections -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Prefix Settings -->
-        <div class="bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6">
+        <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
           <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
             <svg
-              class="w-6 h-6 text-neutral-200"
+              class="w-6 h-6 text-purple-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -209,12 +199,12 @@
               v-model="settings.prefix"
               type="text"
               placeholder="!"
-              class="flex-1 px-4 py-2 bg-neutral-900/60 border border-neutral-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-neutral-400"
+              class="flex-1 px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
               maxlength="5"
             />
             <button
               @click="saveSettings"
-              class="px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg transition-colors"
+              class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
             >
               Save
             </button>
@@ -222,10 +212,10 @@
         </div>
 
         <!-- Welcome Messages -->
-        <div class="bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6">
+        <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
           <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
             <svg
-              class="w-6 h-6 text-neutral-200"
+              class="w-6 h-6 text-blue-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -246,7 +236,7 @@
                 @click="settings.welcome.enabled = !settings.welcome.enabled"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
-                  settings.welcome.enabled ? 'bg-neutral-500' : 'bg-gray-600',
+                  settings.welcome.enabled ? 'bg-purple-600' : 'bg-gray-600',
                 ]"
               >
                 <span
@@ -271,7 +261,7 @@
                     type="text"
                     placeholder="Select a channel..."
                     :disabled="channels.length === 0 || !settings.welcome.enabled"
-                    class="flex-1 px-4 py-2 bg-neutral-900/60 border border-neutral-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-neutral-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="flex-1 px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <button
                     v-if="selectedWelcomeChannel"
@@ -293,13 +283,13 @@
                 <!-- Dropdown -->
                 <div
                   v-if="showWelcomeChannelDropdown && filteredWelcomeChannels.length > 0"
-                  class="absolute z-10 w-full mt-1 bg-neutral-900/90 border border-neutral-700/50 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                  class="absolute z-10 w-full mt-1 bg-gray-800 border border-purple-500/30 rounded-lg shadow-lg max-h-48 overflow-y-auto"
                 >
                   <button
                     v-for="channel in filteredWelcomeChannels"
                     :key="channel.id"
                     @mousedown.prevent="selectWelcomeChannel(channel)"
-                    class="w-full px-4 py-2 text-left text-white hover:bg-neutral-800/20 transition-colors flex items-center gap-2"
+                    class="w-full px-4 py-2 text-left text-white hover:bg-purple-600/20 transition-colors flex items-center gap-2"
                   >
                     <span class="text-gray-400">#</span>
                     <span>{{ channel.name }}</span>
@@ -319,13 +309,13 @@
               v-model="settings.welcome.message"
               :disabled="!settings.welcome.enabled"
               placeholder="Welcome {user} to {server}!"
-              class="w-full px-4 py-2 bg-neutral-900/60 border border-neutral-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-neutral-400 disabled:opacity-50"
+              class="w-full px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 disabled:opacity-50"
               rows="3"
             ></textarea>
             <button
               @click="saveSettings"
               :disabled="!settings.welcome.enabled"
-              class="w-full px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Save Welcome Settings
             </button>
@@ -333,7 +323,7 @@
         </div>
 
         <!-- Auto-Moderation -->
-        <div class="bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6">
+        <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
           <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
             <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -407,7 +397,7 @@
         </div>
 
         <!-- Logging -->
-        <div class="bg-neutral-900/70 backdrop-blur-md border border-neutral-700/40 rounded-xl p-6">
+        <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
           <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
             <svg
               class="w-6 h-6 text-green-400"
@@ -480,7 +470,7 @@
                     type="text"
                     placeholder="Select a channel..."
                     :disabled="channels.length === 0 || !settings.logs.enabled"
-                    class="flex-1 px-4 py-2 bg-neutral-900/60 border border-neutral-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="flex-1 px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <button
                     v-if="selectedLogsChannel"
@@ -502,13 +492,13 @@
                 <!-- Dropdown -->
                 <div
                   v-if="showChannelDropdown && filteredLogsChannels.length > 0"
-                  class="absolute z-10 w-full mt-1 bg-neutral-900/90 border border-neutral-700/50 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                  class="absolute z-10 w-full mt-1 bg-gray-800 border border-purple-500/30 rounded-lg shadow-lg max-h-48 overflow-y-auto"
                 >
                   <button
                     v-for="channel in filteredLogsChannels"
                     :key="channel.id"
                     @mousedown.prevent="selectChannel(channel)"
-                    class="w-full px-4 py-2 text-left text-white hover:bg-neutral-800/20 transition-colors flex items-center gap-2"
+                    class="w-full px-4 py-2 text-left text-white hover:bg-purple-600/20 transition-colors flex items-center gap-2"
                   >
                     <span class="text-gray-400">#</span>
                     <span>{{ channel.name }}</span>
@@ -616,7 +606,7 @@
       <div class="mt-8 flex justify-center">
         <button
           @click="saveSettings"
-          class="px-8 py-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg font-semibold transition-colors"
+          class="px-8 py-3 bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-colors"
         >
           Save All Settings
         </button>
