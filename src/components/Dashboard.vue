@@ -323,7 +323,7 @@
             role="button"
             :aria-label="`Configure ${guild.name} server settings`"
             tabindex="0"
-            class="relative bg-black/30 border border-purple-500/20 rounded-lg p-4 hover:border-purple-500/40 hover:bg-black/40 transition-all duration-300 cursor-pointer transform-style-3d hover:shadow-xl hover:shadow-purple-500/20 scroll-reveal focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            class="relative bg-black/30 border border-purple-500/20 rounded-lg p-4 hover:border-purple-500/40 hover:bg-black/40 transition-all duration-300 cursor-pointer transform-style-3d hover:shadow-xl hover:shadow-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
             :class="`animate-delay-${Math.min(index * 100, 500)}`"
           >
             <!-- Glare overlay effect -->
