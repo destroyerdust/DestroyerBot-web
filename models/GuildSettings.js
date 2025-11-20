@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
 const logSettingsSchema = new mongoose.Schema({
+  enabled: {
+    type: Boolean,
+    default: false,
+  },
   channelId: {
     type: String,
     default: null,
@@ -72,10 +76,6 @@ const guildSettingsSchema = new mongoose.Schema({
   logModeration: {
     type: Boolean,
     default: false
-  },
-  logChannelId: {
-    type: String,
-    default: null
   },
     logs: logSettingsSchema,
     welcome: welcomeSettingsSchema,
