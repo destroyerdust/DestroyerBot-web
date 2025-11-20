@@ -515,7 +515,7 @@
             </div>
 
             <!-- Logging Options -->
-            <div class="flex items-center justify-between pt-2">
+            <div class="flex items-center justify-between">
               <span class="text-gray-300">Log message creates</span>
               <button
                 @click="settings.logs.messageCreate = !settings.logs.messageCreate"
@@ -534,7 +534,7 @@
                 ></span>
               </button>
             </div>
-            <div class="flex items-center justify-between pt-2">
+            <div class="flex items-center justify-between">
               <span class="text-gray-300">Log message deletes</span>
               <button
                 @click="settings.logs.messageDelete = !settings.logs.messageDelete"
