@@ -378,13 +378,14 @@ app.get('/api/guilds/:id', async (req, res) => {
         filterProfanity: false,
         antiSpam: false,
         linkFilter: false,
-      logDeletes: false,
-      logMembers: false,
-      logModeration: false,
-      logs: {
-        channelId: null,
-        messageCreate: true,
-        messageDelete: true
+        logDeletes: false,
+        logMembers: false,
+        logModeration: false,
+        logs: {
+          enabled: false,
+          channelId: null,
+          messageCreate: true,
+          messageDelete: true
         }
       };
     } else {
@@ -404,10 +405,14 @@ app.get('/api/guilds/:id', async (req, res) => {
       // Migrate log settings
       if (!guildSettingsDoc.logs) {
         guildSettingsDoc.logs = {
+          enabled: false,
           channelId: guildSettingsDoc.logChannelId || null,
           messageCreate: guildSettingsDoc.logDeletes || false, // Assuming logDeletes was for message events
           messageDelete: guildSettingsDoc.logDeletes || false
         };
+        needsMigration = true;
+      } else if (guildSettingsDoc.logs.enabled === undefined) {
+        guildSettingsDoc.logs.enabled = false;
         needsMigration = true;
       }
 

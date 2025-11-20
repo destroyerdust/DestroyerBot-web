@@ -63,6 +63,7 @@ async function handler(req, res) {
         logMembers: false,
         logModeration: false,
         logs: {
+          enabled: false,
           channelId: null,
           messageCreate: true,
           messageDelete: true
@@ -85,10 +86,14 @@ async function handler(req, res) {
       // Migrate log settings
       if (!guildSettingsDoc.logs) {
         guildSettingsDoc.logs = {
+          enabled: false,
           channelId: guildSettingsDoc.logChannelId || null,
           messageCreate: guildSettingsDoc.logDeletes || false, // Assuming logDeletes was for message events
           messageDelete: guildSettingsDoc.logDeletes || false
         };
+        needsMigration = true;
+      } else if (guildSettingsDoc.logs.enabled === undefined) {
+        guildSettingsDoc.logs.enabled = false;
         needsMigration = true;
       }
 

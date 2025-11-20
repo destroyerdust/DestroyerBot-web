@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
 const logSettingsSchema = new mongoose.Schema({
+  enabled: {
+    type: Boolean,
+    default: false,
+  },
   channelId: {
     type: String,
     default: null,

@@ -415,6 +415,24 @@
             Logging
           </h3>
           <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-gray-300">Enable logging</span>
+              <button
+                @click="settings.logs.enabled = !settings.logs.enabled"
+                :class="[
+                  'relative w-12 h-6 rounded-full transition-colors',
+                  settings.logs.enabled ? 'bg-green-600' : 'bg-gray-600',
+                ]"
+              >
+                <span
+                  :class="[
+                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
+                    settings.logs.enabled ? 'left-7' : 'left-1',
+                  ]"
+                ></span>
+              </button>
+            </div>
+
             <!-- Log Channel Selector -->
             <div>
               <label class="block text-gray-300 text-sm mb-2">Log Channel</label>
@@ -451,7 +469,7 @@
                     @input="showChannelDropdown = true"
                     type="text"
                     placeholder="Select a channel..."
-                    :disabled="channels.length === 0"
+                    :disabled="channels.length === 0 || !settings.logs.enabled"
                     class="flex-1 px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <button
@@ -607,6 +625,7 @@ const settings = ref({
   logMembers: false,
   logModeration: false,
   logs: {
+    enabled: false,
     channelId: null,
     messageCreate: true,
     messageDelete: true,
