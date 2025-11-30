@@ -4,7 +4,7 @@
       <h2
         class="text-5xl font-bold mb-4 text-center bg-linear-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
       >
-        🤖 Complete Command Documentation
+        Complete Command Documentation
       </h2>
       <p class="text-center text-gray-400 mb-12 text-lg">
         Comprehensive guide to all DestroyerBot commands, usage, and examples
