@@ -238,7 +238,7 @@
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Enable welcome messages</span>
               <button
-                @click="settings.welcome.enabled = !settings.welcome.enabled"
+                @click="toggleWelcomeEnabled"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
                   settings.welcome.enabled ? 'bg-purple-600' : 'bg-gray-600',
@@ -344,7 +344,7 @@
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Filter profanity</span>
               <button
-                @click="settings.filterProfanity = !settings.filterProfanity"
+                @click="toggleFilterProfanity"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
                   settings.filterProfanity ? 'bg-red-600' : 'bg-gray-600',
@@ -361,7 +361,7 @@
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Anti-spam</span>
               <button
-                @click="settings.antiSpam = !settings.antiSpam"
+                @click="toggleAntiSpam"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
                   settings.antiSpam ? 'bg-red-600' : 'bg-gray-600',
@@ -378,7 +378,7 @@
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Link filtering</span>
               <button
-                @click="settings.linkFilter = !settings.linkFilter"
+                @click="toggleLinkFilter"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
                   settings.linkFilter ? 'bg-red-600' : 'bg-gray-600',
@@ -423,7 +423,7 @@
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Enable logging</span>
               <button
-                @click="settings.logs.enabled = !settings.logs.enabled"
+                @click="toggleLogsEnabled"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
                   settings.logs.enabled ? 'bg-green-600' : 'bg-gray-600',
@@ -523,7 +523,7 @@
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Log message creates</span>
               <button
-                @click="settings.logs.messageCreate = !settings.logs.messageCreate"
+                @click="toggleLogsMessageCreate"
                 :disabled="!settings.logs.enabled"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
@@ -542,7 +542,7 @@
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Log message deletes</span>
               <button
-                @click="settings.logs.messageDelete = !settings.logs.messageDelete"
+                @click="toggleLogsMessageDelete"
                 :disabled="!settings.logs.enabled"
                 :class="[
                   'relative w-12 h-6 rounded-full transition-colors',
@@ -642,6 +642,29 @@ const guild = ref({})
 const loading = ref(true)
 const error = ref(null)
 
+/**
+ * Guild settings object structure
+ * @typedef {Object} GuildSettings
+ * @property {string} prefix - Command prefix for this guild (e.g., '!')
+ * @property {boolean} welcomeEnabled - @deprecated Use welcome.enabled instead
+ * @property {string} welcomeMessage - @deprecated Use welcome.message instead
+ * @property {Object} welcome - Welcome message configuration
+ * @property {boolean} welcome.enabled - Whether welcome messages are enabled
+ * @property {string|null} welcome.channelId - Discord channel ID for welcome messages
+ * @property {string} welcome.message - Welcome message template (supports {user} and {server} placeholders)
+ * @property {boolean} filterProfanity - Enable automatic profanity filtering
+ * @property {boolean} antiSpam - Enable anti-spam protection
+ * @property {boolean} linkFilter - Enable link filtering
+ * @property {boolean} logDeletes - @deprecated Use logs.messageDelete instead
+ * @property {boolean} logMembers - Whether to log member joins/leaves (not yet implemented)
+ * @property {boolean} logModeration - Whether to log moderation actions (not yet implemented)
+ * @property {Object} logs - Logging configuration
+ * @property {boolean} logs.enabled - Whether logging is enabled
+ * @property {string|null} logs.channelId - Discord channel ID for logs
+ * @property {boolean} logs.messageCreate - Whether to log message creation events
+ * @property {boolean} logs.messageDelete - Whether to log message deletion events
+ */
+
 // Guild settings state
 const settings = ref({
   prefix: '!',
@@ -690,6 +713,35 @@ const showNotification = (message, type = 'success') => {
   setTimeout(() => {
     notification.value.show = false
   }, 3000)
+}
+
+// Settings toggle methods
+const toggleWelcomeEnabled = () => {
+  settings.value.welcome.enabled = !settings.value.welcome.enabled
+}
+
+const toggleFilterProfanity = () => {
+  settings.value.filterProfanity = !settings.value.filterProfanity
+}
+
+const toggleAntiSpam = () => {
+  settings.value.antiSpam = !settings.value.antiSpam
+}
+
+const toggleLinkFilter = () => {
+  settings.value.linkFilter = !settings.value.linkFilter
+}
+
+const toggleLogsEnabled = () => {
+  settings.value.logs.enabled = !settings.value.logs.enabled
+}
+
+const toggleLogsMessageCreate = () => {
+  settings.value.logs.messageCreate = !settings.value.logs.messageCreate
+}
+
+const toggleLogsMessageDelete = () => {
+  settings.value.logs.messageDelete = !settings.value.logs.messageDelete
 }
 
 const guildIcon = computed(() => {

@@ -72,6 +72,7 @@
             <img
               :src="userAvatar"
               :alt="user.username"
+              loading="lazy"
               class="w-24 h-24 rounded-full border-4 border-purple-500 transition-all duration-300 group-hover:border-purple-400 group-hover:scale-105"
             />
             <!-- Glow ring on hover -->
@@ -343,6 +344,7 @@
                     v-if="getGuildIcon(guild)"
                     :src="getGuildIcon(guild)"
                     :alt="guild.name"
+                    loading="lazy"
                     class="w-full h-full object-cover"
                   />
                   <span v-else class="text-2xl font-bold text-purple-400">
