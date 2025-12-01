@@ -446,14 +446,7 @@ import { useCountUp } from '@/composables/useCountUp.js'
 const router = useRouter()
 
 // Use auth composable for authentication logic
-const {
-  user,
-  loading,
-  discordAuthUrl,
-  userAvatar,
-  loadUserFromCookie,
-  logout: authLogout,
-} = useAuth()
+const { user, loading, discordAuthUrl, userAvatar, loadUserFromCookie, logout } = useAuth()
 
 const guilds = ref([])
 const loadingGuilds = ref(false)
@@ -523,10 +516,6 @@ onMounted(async () => {
 
 const navigateToGuild = guildId => {
   router.push(`/guild/${guildId}`)
-}
-
-const logout = () => {
-  authLogout()
 }
 </script>
 
