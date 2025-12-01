@@ -1,12 +1,41 @@
+/**
+ * Discord API interaction utilities with MongoDB caching support.
+ * Provides helper functions for fetching guild and channel data with rate limit logging.
+ * @module api/lib/discord
+ */
+
 import { connectToDatabase } from './db.js';
 import GuildCache from '../../models/GuildCache.js';
 import ChannelCache from '../../models/ChannelCache.js';
 
-// Debug logging for Discord API calls
+/**
+ * Logs Discord API call information for debugging and monitoring.
+ * Includes the endpoint, HTTP method, and timestamp.
+ *
+ * @param {string} endpoint - The Discord API endpoint being called (e.g., '/users/@me/guilds')
+ * @param {string} [method='GET'] - The HTTP method (GET, POST, etc.)
+ * @returns {void}
+ *
+ * @example
+ * logDiscordAPICall('/guilds/123456/channels', 'GET');
+ */
 export function logDiscordAPICall(endpoint, method = 'GET') {
   console.log(`🔵 Discord API Call: ${method} ${endpoint} at ${new Date().toISOString()}`);
 }
 
+/**
+ * Logs Discord API response information including rate limit details.
+ * Helps monitor API usage and identify potential rate limiting issues.
+ *
+ * @param {string} endpoint - The Discord API endpoint that was called
+ * @param {number} status - HTTP response status code
+ * @param {Headers} headers - Response headers object containing rate limit information
+ * @returns {void}
+ *
+ * @example
+ * const response = await fetch('https://discord.com/api/users/@me');
+ * logDiscordAPIResponse('/users/@me', response.status, response.headers);
+ */
 export function logDiscordAPIResponse(endpoint, status, headers) {
   const rateLimit = {
     limit: headers.get('x-ratelimit-limit'),
@@ -30,7 +59,27 @@ export function logDiscordAPIResponse(endpoint, status, headers) {
   }
 }
 
-// Helper function to get user's guilds with MongoDB caching
+/**
+ * Fetches user's Discord guilds with MongoDB caching to reduce API calls.
+ * Implements a 5-minute cache TTL (Time To Live).
+ *
+ * @async
+ * @param {string} token - Discord OAuth access token (Bearer token)
+ * @param {string} userId - Discord user ID for cache lookup
+ * @returns {Promise<Object>} Result object containing guilds array and cache status
+ * @returns {Array<Object>} returns.guilds - Array of guild objects from Discord API
+ * @returns {boolean} [returns.fromCache] - Whether data was served from cache
+ * @returns {boolean} [returns.error] - Whether an error occurred
+ * @returns {number} [returns.status] - HTTP status code if error occurred
+ * @returns {string} [returns.message] - Error message if applicable
+ *
+ * @example
+ * const result = await getCachedUserGuilds(token, userId);
+ * if (result.error) {
+ *   return res.status(result.status || 500).json({ error: 'Failed to fetch guilds' });
+ * }
+ * const guilds = result.guilds;
+ */
 export async function getCachedUserGuilds(token, userId) {
   const GUILD_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
@@ -79,7 +128,26 @@ export async function getCachedUserGuilds(token, userId) {
   }
 }
 
-// Helper function to get guild channels with MongoDB caching
+/**
+ * Fetches guild channels with MongoDB caching and fallback handling.
+ * Implements a 5-minute cache TTL. Falls back to stale cache if rate limited.
+ * Filters and returns only text channels (type 0).
+ *
+ * @async
+ * @param {string} guildId - Discord guild (server) ID
+ * @param {string} botToken - Discord bot token for API authentication (without 'Bot' prefix)
+ * @returns {Promise<Object>} Result object containing channels and optional warnings
+ * @returns {Array<Object>} returns.channels - Array of text channel objects {id, name, position}
+ * @returns {boolean} [returns.fromCache] - Whether data was served from cache
+ * @returns {string} [returns.warning] - Warning message if bot token missing or rate limited
+ *
+ * @example
+ * const result = await getCachedGuildChannels(guildId, process.env.BOT_TOKEN);
+ * if (result.warning) {
+ *   console.warn(result.warning);
+ * }
+ * return res.json({ channels: result.channels });
+ */
 export async function getCachedGuildChannels(guildId, botToken) {
   const CHANNEL_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
