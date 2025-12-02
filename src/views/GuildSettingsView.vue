@@ -19,11 +19,12 @@
           </div>
           <div class="flex items-center gap-4">
             <button
-              @click="logout"
+              @click="handleLogout"
+              :disabled="loggingOut"
               aria-label="Logout from guild settings"
-              class="relative overflow-hidden group px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-red-500/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+              class="relative overflow-hidden group px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-red-500/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              <span class="relative z-10">Logout</span>
+              <span class="relative z-10">{{ loggingOut ? 'Logging out...' : 'Logout' }}</span>
               <!-- Shimmer effect on hover -->
               <div
                 class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/20 to-transparent"
@@ -367,6 +368,7 @@ const guildId = route.params.id
 const guild = ref({})
 const loading = ref(true)
 const error = ref(null)
+const loggingOut = ref(false)
 
 /**
  * Guild settings object structure
@@ -502,6 +504,25 @@ const saveSettings = async () => {
 
 const goBack = () => {
   router.push('/dashboard')
+}
+
+/**
+ * Handle logout with proper error handling
+ * Disables UI while logout is in progress and only redirects on success
+ */
+const handleLogout = async () => {
+  loggingOut.value = true
+
+  try {
+    await logout()
+    // Only redirect on successful logout
+    // The logout function should handle the redirect, but we can add a fallback
+  } catch (err) {
+    console.error('Logout failed:', err)
+    showNotification(err?.message || 'Failed to logout. Please try again.', 'error')
+  } finally {
+    loggingOut.value = false
+  }
 }
 
 onMounted(async () => {

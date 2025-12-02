@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { NOTIFICATION_DURATION } from '@/utils/animations.js'
 
 /**
  * @typedef {Object} Notification
@@ -39,9 +40,13 @@ export function useNotification() {
    * Show a notification
    * @param {string} message - Message to display
    * @param {'success'|'error'|'info'|'warning'} [type='success'] - Notification type
-   * @param {number} [duration=3000] - Auto-hide duration in milliseconds (0 = no auto-hide)
+   * @param {number} [duration=NOTIFICATION_DURATION.DEFAULT] - Auto-hide duration in milliseconds (0 = no auto-hide)
    */
-  const showNotification = (message, type = 'success', duration = 3000) => {
+  const showNotification = (
+    message,
+    type = 'success',
+    duration = NOTIFICATION_DURATION.DEFAULT
+  ) => {
     // Clear any existing timeout
     if (timeoutId) {
       clearTimeout(timeoutId)

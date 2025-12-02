@@ -116,6 +116,7 @@
  * />
  */
 import { ref, computed, watch } from 'vue'
+import { DROPDOWN_TIMING } from '@/utils/animations.js'
 
 /**
  * Component props
@@ -218,7 +219,7 @@ const handleFocus = () => {
 const handleBlur = () => {
   setTimeout(() => {
     showDropdown.value = false
-  }, 200)
+  }, DROPDOWN_TIMING.CLOSE_DELAY)
 }
 
 /**

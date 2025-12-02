@@ -131,6 +131,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { COMMAND_CATEGORIES, COMMAND_LIST } from '@/data/commands.js'
+import { COPY_FEEDBACK_DURATION } from '@/utils/animations.js'
 
 /**
  * CommandShowcase component
@@ -153,7 +154,7 @@ const copyCommand = async command => {
     copiedCommand.value = command
     setTimeout(() => {
       copiedCommand.value = null
-    }, 2000)
+    }, COPY_FEEDBACK_DURATION)
   } catch (err) {
     console.error('Failed to copy:', err)
   }

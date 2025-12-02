@@ -1,11 +1,12 @@
 import { ref, watch, onMounted } from 'vue'
+import { DEBOUNCE_DELAY } from '@/utils/animations.js'
 
 /**
  * Debounces a reactive value
  * Useful for search inputs to avoid excessive API calls or expensive computations
  *
  * @param {Ref} value - The reactive ref to debounce
- * @param {number} delay - Delay in milliseconds (default: 300ms)
+ * @param {number} delay - Delay in milliseconds (default: DEBOUNCE_DELAY.DEFAULT)
  * @returns {Ref} Debounced ref that updates after the delay
  *
  * @example
@@ -17,7 +18,7 @@ import { ref, watch, onMounted } from 'vue'
  *   fetchResults(newValue)
  * })
  */
-export function useDebounce(value, delay = 300) {
+export function useDebounce(value, delay = DEBOUNCE_DELAY.DEFAULT) {
   const debouncedValue = ref(value.value)
   let timeout = null
 
