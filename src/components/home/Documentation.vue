@@ -266,6 +266,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { COMMAND_CATEGORIES, COMMAND_DOCUMENTATION } from '@/data/documentation.js'
 import { useDebounce } from '@/composables/useDebounce.js'
 import { useScrollReveal } from '@/composables/useScrollReveal.js'
+import { COPY_FEEDBACK_DURATION } from '@/utils/animations.js'
 
 /**
  * Documentation component
@@ -330,7 +331,7 @@ const copyCommand = async command => {
     copiedCommand.value = command
     setTimeout(() => {
       copiedCommand.value = null
-    }, 2000)
+    }, COPY_FEEDBACK_DURATION)
   } catch (err) {
     console.error('Failed to copy:', err)
   }

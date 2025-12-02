@@ -2,9 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Cookies from 'js-cookie'
 
 // Lazy load components for better performance
-const Home = () => import('../components/Home.vue')
-const Dashboard = () => import('../components/Dashboard.vue')
-const GuildSettings = () => import('../components/GuildSettings.vue')
+const Home = () => import('../views/HomeView.vue')
+const Dashboard = () => import('../views/DashboardView.vue')
+const GuildSettings = () => import('../views/GuildSettingsView.vue')
 
 const routes = [
   {

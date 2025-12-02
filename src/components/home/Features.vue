@@ -247,6 +247,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useCardTilt } from '@/composables/useCardTilt.js'
+import { ENTRANCE_ANIMATION } from '@/utils/animations.js'
 
 /**
  * Features component
@@ -267,6 +268,6 @@ onMounted(() => {
   // Trigger staggered entrance animation
   setTimeout(() => {
     cardsRevealed.value = true
-  }, 100)
+  }, ENTRANCE_ANIMATION.INITIAL_DELAY)
 })
 </script>

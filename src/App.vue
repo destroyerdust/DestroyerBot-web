@@ -1,11 +1,10 @@
 <template>
   <div id="app">
     <router-view />
+    <NotificationToast />
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App',
-}
+<script setup>
+import NotificationToast from '@/components/ui/NotificationToast.vue'
 </script>
