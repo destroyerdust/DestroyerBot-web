@@ -6,5 +6,5 @@
 </template>
 
 <script setup>
-import NotificationToast from '@/components/NotificationToast.vue'
+import NotificationToast from '@/components/ui/NotificationToast.vue'
 </script>

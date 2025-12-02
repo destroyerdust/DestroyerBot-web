@@ -349,9 +349,9 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth.js'
 import { useNotification } from '@/composables/useNotification.js'
-import ToggleSwitch from '@/components/ToggleSwitch.vue'
-import ChannelSelector from '@/components/ChannelSelector.vue'
-import SettingCard from '@/components/SettingCard.vue'
+import ToggleSwitch from '@/components/ui/ToggleSwitch.vue'
+import ChannelSelector from '@/components/ui/ChannelSelector.vue'
+import SettingCard from '@/components/ui/SettingCard.vue'
 
 const route = useRoute()
 const router = useRouter()
