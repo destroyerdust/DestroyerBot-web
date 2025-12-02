@@ -109,7 +109,8 @@ To use this authentication:
 - User profile card with Discord avatar
 - Stats cards (Servers, Commands Used, Premium Status)
 - Quick action buttons
-- Logout functionality
+- Logout functionality with error handling and loading states
+- Guild management interface
 
 ### Security Features
 - HttpOnly cookies for session management
@@ -141,17 +142,28 @@ For production, you'll need to:
 
 ## File Structure
 ```
-├── server.js                      # Express backend server
+├── api/                           # Vercel serverless functions
+│   ├── lib/
+│   │   └── auth.js                # Authentication helpers
+│   ├── auth/
+│   │   ├── discord.js             # Discord OAuth callback
+│   │   └── logout.js              # Logout endpoint
+│   └── guilds/                    # Guild management endpoints
 ├── src/
 │   ├── components/
-│   │   ├── Dashboard.vue          # Dashboard page
-│   │   └── Hero.vue               # Home page with login button
+│   │   ├── home/
+│   │   │   └── Hero.vue           # Home page with login button
+│   │   └── ui/                    # Reusable UI components
+│   ├── views/
+│   │   ├── DashboardView.vue      # Dashboard page with error handling
+│   │   └── GuildSettingsView.vue  # Guild settings with logout error handling
+│   ├── composables/
+│   │   ├── useAuth.js             # Authentication composable
+│   │   └── useNotification.js     # Notification system
+│   ├── utils/
+│   │   └── animations.js          # Centralized timing constants
 │   └── router/
 │       └── index.js               # Vue Router configuration
-├── api/
-│   └── auth/
-│       ├── discord.js             # Vercel serverless function (for production)
-│       └── logout.js              # Vercel serverless function (for production)
 └── .env.local                     # Environment variables
 ```
 
