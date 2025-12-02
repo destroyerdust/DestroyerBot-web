@@ -34,79 +34,6 @@
       </div>
     </nav>
 
-    <!-- Notification Toast -->
-    <transition
-      enter-active-class="transition ease-out duration-300"
-      enter-from-class="transform translate-y-2 opacity-0"
-      enter-to-class="transform translate-y-0 opacity-100"
-      leave-active-class="transition ease-in duration-200"
-      leave-from-class="transform translate-y-0 opacity-100"
-      leave-to-class="transform translate-y-2 opacity-0"
-    >
-      <div v-if="notification.show" class="fixed top-20 right-4 z-50 max-w-sm w-full">
-        <div
-          :class="[
-            'rounded-lg shadow-lg p-4 flex items-start gap-3',
-            notification.type === 'success'
-              ? 'bg-green-600 border border-green-500'
-              : 'bg-red-600 border border-red-500',
-          ]"
-        >
-          <!-- Icon -->
-          <div class="shrink-0">
-            <svg
-              v-if="notification.type === 'success'"
-              class="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <svg
-              v-else
-              class="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-
-          <!-- Message -->
-          <div class="flex-1">
-            <p class="text-white font-medium">{{ notification.message }}</p>
-          </div>
-
-          <!-- Close button -->
-          <button
-            @click="notification.show = false"
-            class="shrink-0 text-white hover:text-gray-200 transition-colors"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </transition>
-
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center h-[calc(100vh-4rem)]">
       <div class="text-center">
@@ -179,14 +106,13 @@
       <!-- Bot Settings Sections -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Prefix Settings -->
-        <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
-          <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <svg
-              class="w-6 h-6 text-purple-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+        <SettingCard
+          title="Command Prefix"
+          description="Set a custom prefix for bot commands in this server"
+          icon-color="purple"
+        >
+          <template #icon>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -194,11 +120,8 @@
                 d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            Command Prefix
-          </h3>
-          <p class="text-gray-400 text-sm mb-4">
-            Set a custom prefix for bot commands in this server
-          </p>
+          </template>
+
           <div class="flex gap-2">
             <input
               v-model="settings.prefix"
@@ -214,17 +137,12 @@
               Save
             </button>
           </div>
-        </div>
+        </SettingCard>
 
         <!-- Welcome Messages -->
-        <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
-          <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <svg
-              class="w-6 h-6 text-blue-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+        <SettingCard title="Welcome Messages" icon-color="blue">
+          <template #icon>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -232,83 +150,25 @@
                 d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
               />
             </svg>
-            Welcome Messages
-          </h3>
+          </template>
+
           <div class="space-y-4">
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Enable welcome messages</span>
-              <button
-                @click="toggleWelcomeEnabled"
-                :class="[
-                  'relative w-12 h-6 rounded-full transition-colors',
-                  settings.welcome.enabled ? 'bg-purple-600' : 'bg-gray-600',
-                ]"
-              >
-                <span
-                  :class="[
-                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.welcome.enabled ? 'left-7' : 'left-1',
-                  ]"
-                ></span>
-              </button>
+              <ToggleSwitch
+                v-model="settings.welcome.enabled"
+                variant="purple"
+                aria-label="Enable welcome messages"
+              />
             </div>
 
-            <!-- Welcome Channel Selector -->
-            <div>
-              <label class="block text-gray-300 text-sm mb-2">Welcome Channel</label>
-              <div class="relative">
-                <div class="flex gap-2">
-                  <input
-                    v-model="welcomeChannelSearch"
-                    @focus="handleWelcomeChannelInputFocus"
-                    @blur="handleWelcomeChannelInputBlur"
-                    @input="showWelcomeChannelDropdown = true"
-                    type="text"
-                    placeholder="Select a channel..."
-                    :disabled="channels.length === 0 || !settings.welcome.enabled"
-                    class="flex-1 px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                  <button
-                    v-if="selectedWelcomeChannel"
-                    @click="clearWelcomeChannel"
-                    class="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors"
-                    title="Clear selection"
-                  >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-
-                <!-- Dropdown -->
-                <div
-                  v-if="showWelcomeChannelDropdown && filteredWelcomeChannels.length > 0"
-                  class="absolute z-10 w-full mt-1 bg-gray-800 border border-purple-500/30 rounded-lg shadow-lg max-h-48 overflow-y-auto"
-                >
-                  <button
-                    v-for="channel in filteredWelcomeChannels"
-                    :key="channel.id"
-                    @mousedown.prevent="selectWelcomeChannel(channel)"
-                    class="w-full px-4 py-2 text-left text-white hover:bg-purple-600/20 transition-colors flex items-center gap-2"
-                  >
-                    <span class="text-gray-400">#</span>
-                    <span>{{ channel.name }}</span>
-                  </button>
-                </div>
-              </div>
-              <p class="text-gray-500 text-xs mt-1">
-                {{
-                  selectedWelcomeChannel
-                    ? `Selected: #${selectedWelcomeChannel.name}`
-                    : 'No channel selected'
-                }}
-              </p>
-            </div>
+            <ChannelSelector
+              v-model="settings.welcome.channelId"
+              :channels="channels"
+              label="Welcome Channel"
+              :disabled="!settings.welcome.enabled"
+              focus-border-color="blue"
+            />
 
             <textarea
               v-model="settings.welcome.message"
@@ -317,6 +177,9 @@
               class="w-full px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 disabled:opacity-50"
               rows="3"
             ></textarea>
+          </div>
+
+          <template #actions>
             <button
               @click="saveSettings"
               :disabled="!settings.welcome.enabled"
@@ -324,13 +187,13 @@
             >
               Save Welcome Settings
             </button>
-          </div>
-        </div>
+          </template>
+        </SettingCard>
 
         <!-- Auto-Moderation -->
-        <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
-          <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <SettingCard title="Auto-Moderation" icon-color="red">
+          <template #icon>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -338,78 +201,51 @@
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            Auto-Moderation
-          </h3>
+          </template>
+
           <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Filter profanity</span>
-              <button
-                @click="toggleFilterProfanity"
-                :class="[
-                  'relative w-12 h-6 rounded-full transition-colors',
-                  settings.filterProfanity ? 'bg-red-600' : 'bg-gray-600',
-                ]"
-              >
-                <span
-                  :class="[
-                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.filterProfanity ? 'left-7' : 'left-1',
-                  ]"
-                ></span>
-              </button>
+              <ToggleSwitch
+                v-model="settings.filterProfanity"
+                variant="red"
+                aria-label="Toggle profanity filter"
+              />
             </div>
+
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Anti-spam</span>
-              <button
-                @click="toggleAntiSpam"
-                :class="[
-                  'relative w-12 h-6 rounded-full transition-colors',
-                  settings.antiSpam ? 'bg-red-600' : 'bg-gray-600',
-                ]"
-              >
-                <span
-                  :class="[
-                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.antiSpam ? 'left-7' : 'left-1',
-                  ]"
-                ></span>
-              </button>
+              <ToggleSwitch
+                v-model="settings.antiSpam"
+                variant="red"
+                aria-label="Toggle anti-spam"
+              />
             </div>
+
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Link filtering</span>
-              <button
-                @click="toggleLinkFilter"
-                :class="[
-                  'relative w-12 h-6 rounded-full transition-colors',
-                  settings.linkFilter ? 'bg-red-600' : 'bg-gray-600',
-                ]"
-              >
-                <span
-                  :class="[
-                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.linkFilter ? 'left-7' : 'left-1',
-                  ]"
-                ></span>
-              </button>
+              <ToggleSwitch
+                v-model="settings.linkFilter"
+                variant="red"
+                aria-label="Toggle link filter"
+              />
             </div>
+          </div>
+
+          <template #actions>
             <button
               @click="saveSettings"
-              class="w-full px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors mt-4"
+              class="w-full px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
             >
               Save Moderation Settings
             </button>
-          </div>
-        </div>
+          </template>
+        </SettingCard>
 
         <!-- Logging -->
-        <div class="bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
-          <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <svg
-              class="w-6 h-6 text-green-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+        <SettingCard title="Logging" icon-color="green">
+          <template #icon>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -417,194 +253,77 @@
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            Logging
-          </h3>
+          </template>
+
           <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Enable logging</span>
-              <button
-                @click="toggleLogsEnabled"
-                :class="[
-                  'relative w-12 h-6 rounded-full transition-colors',
-                  settings.logs.enabled ? 'bg-green-600' : 'bg-gray-600',
-                ]"
-              >
-                <span
-                  :class="[
-                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.logs.enabled ? 'left-7' : 'left-1',
-                  ]"
-                ></span>
-              </button>
+              <ToggleSwitch
+                v-model="settings.logs.enabled"
+                variant="green"
+                aria-label="Enable logging"
+              />
             </div>
 
-            <!-- Log Channel Selector -->
-            <div>
-              <label class="block text-gray-300 text-sm mb-2">Log Channel</label>
+            <ChannelSelector
+              v-model="settings.logs.channelId"
+              :channels="channels"
+              label="Log Channel"
+              :disabled="!settings.logs.enabled"
+              :warning="channelWarning"
+              focus-border-color="green"
+            />
 
-              <!-- Warning Message -->
-              <div
-                v-if="channelWarning"
-                class="mb-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
-              >
-                <div class="flex items-start gap-2">
-                  <svg
-                    class="w-5 h-5 text-yellow-500 shrink-0 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                    />
-                  </svg>
-                  <p class="text-yellow-200 text-xs">{{ channelWarning }}</p>
-                </div>
-              </div>
-
-              <div class="relative">
-                <div class="flex gap-2">
-                  <input
-                    v-model="channelSearch"
-                    @focus="handleChannelInputFocus"
-                    @blur="handleChannelInputBlur"
-                    @input="showChannelDropdown = true"
-                    type="text"
-                    placeholder="Select a channel..."
-                    :disabled="channels.length === 0 || !settings.logs.enabled"
-                    class="flex-1 px-4 py-2 bg-black/40 border border-purple-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                  <button
-                    v-if="selectedLogsChannel"
-                    @click="clearChannel"
-                    class="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors"
-                    title="Clear selection"
-                  >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-
-                <!-- Dropdown -->
-                <div
-                  v-if="showChannelDropdown && filteredLogsChannels.length > 0"
-                  class="absolute z-10 w-full mt-1 bg-gray-800 border border-purple-500/30 rounded-lg shadow-lg max-h-48 overflow-y-auto"
-                >
-                  <button
-                    v-for="channel in filteredLogsChannels"
-                    :key="channel.id"
-                    @mousedown.prevent="selectChannel(channel)"
-                    class="w-full px-4 py-2 text-left text-white hover:bg-purple-600/20 transition-colors flex items-center gap-2"
-                  >
-                    <span class="text-gray-400">#</span>
-                    <span>{{ channel.name }}</span>
-                  </button>
-                </div>
-              </div>
-              <p class="text-gray-500 text-xs mt-1">
-                {{
-                  selectedLogsChannel
-                    ? `Selected: #${selectedLogsChannel.name}`
-                    : 'No channel selected'
-                }}
-              </p>
-            </div>
-
-            <!-- Logging Options -->
             <div class="flex items-center justify-between">
               <span class="text-gray-300">Log message creates</span>
-              <button
-                @click="toggleLogsMessageCreate"
+              <ToggleSwitch
+                v-model="settings.logs.messageCreate"
                 :disabled="!settings.logs.enabled"
-                :class="[
-                  'relative w-12 h-6 rounded-full transition-colors',
-                  settings.logs.messageCreate ? 'bg-green-600' : 'bg-gray-600',
-                  !settings.logs.enabled && 'opacity-50 cursor-not-allowed',
-                ]"
-              >
-                <span
-                  :class="[
-                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.logs.messageCreate ? 'left-7' : 'left-1',
-                  ]"
-                ></span>
-              </button>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-300">Log message deletes</span>
-              <button
-                @click="toggleLogsMessageDelete"
-                :disabled="!settings.logs.enabled"
-                :class="[
-                  'relative w-12 h-6 rounded-full transition-colors',
-                  settings.logs.messageDelete ? 'bg-green-600' : 'bg-gray-600',
-                  !settings.logs.enabled && 'opacity-50 cursor-not-allowed',
-                ]"
-              >
-                <span
-                  :class="[
-                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.logs.messageDelete ? 'left-7' : 'left-1',
-                  ]"
-                ></span>
-              </button>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-300">Log member joins/leaves</span>
-              <button
-                @click="settings.logMembers = !settings.logMembers"
-                disabled
-                :class="[
-                  'relative w-12 h-6 rounded-full transition-colors',
-                  settings.logMembers ? 'bg-green-600' : 'bg-gray-600',
-                  'opacity-50 cursor-not-allowed',
-                ]"
-              >
-                <span
-                  :class="[
-                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.logMembers ? 'left-7' : 'left-1',
-                  ]"
-                ></span>
-              </button>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-300">Log moderation actions</span>
-              <button
-                @click="settings.logModeration = !settings.logModeration"
-                disabled
-                :class="[
-                  'relative w-12 h-6 rounded-full transition-colors',
-                  settings.logModeration ? 'bg-green-600' : 'bg-gray-600',
-                  'opacity-50 cursor-not-allowed',
-                ]"
-              >
-                <span
-                  :class="[
-                    'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform',
-                    settings.logModeration ? 'left-7' : 'left-1',
-                  ]"
-                ></span>
-              </button>
+                variant="green"
+                aria-label="Log message creates"
+              />
             </div>
 
+            <div class="flex items-center justify-between">
+              <span class="text-gray-300">Log message deletes</span>
+              <ToggleSwitch
+                v-model="settings.logs.messageDelete"
+                :disabled="!settings.logs.enabled"
+                variant="green"
+                aria-label="Log message deletes"
+              />
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-gray-300">Log member joins/leaves</span>
+              <ToggleSwitch
+                v-model="settings.logMembers"
+                :disabled="true"
+                variant="green"
+                aria-label="Log member joins/leaves (coming soon)"
+              />
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-gray-300">Log moderation actions</span>
+              <ToggleSwitch
+                v-model="settings.logModeration"
+                :disabled="true"
+                variant="green"
+                aria-label="Log moderation actions (coming soon)"
+              />
+            </div>
+          </div>
+
+          <template #actions>
             <button
               @click="saveSettings"
-              class="w-full px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors mt-4"
+              class="w-full px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
             >
               Save Logging Settings
             </button>
-          </div>
-        </div>
+          </template>
+        </SettingCard>
       </div>
 
       <!-- Save All Button -->
@@ -629,12 +348,19 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth.js'
+import { useNotification } from '@/composables/useNotification.js'
+import ToggleSwitch from '@/components/ToggleSwitch.vue'
+import ChannelSelector from '@/components/ChannelSelector.vue'
+import SettingCard from '@/components/SettingCard.vue'
 
 const route = useRoute()
 const router = useRouter()
 
 // Use auth composable for logout
 const { logout } = useAuth()
+
+// Use notification composable
+const { showNotification } = useNotification()
 
 // Guild state
 const guildId = route.params.id
@@ -691,88 +417,13 @@ const settings = ref({
 
 // Channel selection state
 const channels = ref([])
-const channelSearch = ref('')
-const showChannelDropdown = ref(false)
 const channelWarning = ref('')
-const welcomeChannelSearch = ref('')
-const showWelcomeChannelDropdown = ref(false)
-
-// Notification state
-const notification = ref({
-  show: false,
-  message: '',
-  type: 'success', // 'success' or 'error'
-})
-
-const showNotification = (message, type = 'success') => {
-  notification.value.message = message
-  notification.value.type = type
-  notification.value.show = true
-
-  // Auto-hide after 3 seconds
-  setTimeout(() => {
-    notification.value.show = false
-  }, 3000)
-}
-
-// Settings toggle methods
-const toggleWelcomeEnabled = () => {
-  settings.value.welcome.enabled = !settings.value.welcome.enabled
-}
-
-const toggleFilterProfanity = () => {
-  settings.value.filterProfanity = !settings.value.filterProfanity
-}
-
-const toggleAntiSpam = () => {
-  settings.value.antiSpam = !settings.value.antiSpam
-}
-
-const toggleLinkFilter = () => {
-  settings.value.linkFilter = !settings.value.linkFilter
-}
-
-const toggleLogsEnabled = () => {
-  settings.value.logs.enabled = !settings.value.logs.enabled
-}
-
-const toggleLogsMessageCreate = () => {
-  settings.value.logs.messageCreate = !settings.value.logs.messageCreate
-}
-
-const toggleLogsMessageDelete = () => {
-  settings.value.logs.messageDelete = !settings.value.logs.messageDelete
-}
 
 const guildIcon = computed(() => {
   if (guild.value.icon) {
     return `https://cdn.discordapp.com/icons/${guildId}/${guild.value.icon}.png?size=256`
   }
   return null
-})
-
-const selectedLogsChannel = computed(() => {
-  if (!settings.value.logs.channelId) return null
-  return channels.value.find(ch => ch.id === settings.value.logs.channelId)
-})
-
-const selectedWelcomeChannel = computed(() => {
-  if (!settings.value.welcome.channelId) return null
-  return channels.value.find(ch => ch.id === settings.value.welcome.channelId)
-})
-
-const filteredLogsChannels = computed(() => {
-  if (!channelSearch.value) return channels.value
-  return channels.value.filter(channel =>
-    channel.name.toLowerCase().includes(channelSearch.value.toLowerCase())
-  )
-})
-
-const filteredWelcomeChannels = computed(() => {
-  if (!welcomeChannelSearch.value) return channels.value
-  return channels.value.filter(channel =>
-    channel.name.toLowerCase().includes(welcomeChannelSearch.value.toLowerCase())
-  )
 })
 
 const fetchGuildSettings = async () => {
@@ -827,50 +478,6 @@ const fetchGuildChannels = async () => {
   }
 }
 
-const selectChannel = channel => {
-  settings.value.logs.channelId = channel.id
-  channelSearch.value = channel.name
-  showChannelDropdown.value = false
-}
-
-const selectWelcomeChannel = channel => {
-  settings.value.welcome.channelId = channel.id
-  welcomeChannelSearch.value = channel.name
-  showWelcomeChannelDropdown.value = false
-}
-
-const clearChannel = () => {
-  settings.value.logs.channelId = null
-  channelSearch.value = ''
-}
-
-const clearWelcomeChannel = () => {
-  settings.value.welcome.channelId = null
-  welcomeChannelSearch.value = ''
-}
-
-const handleChannelInputFocus = () => {
-  showChannelDropdown.value = true
-}
-
-const handleChannelInputBlur = () => {
-  // Delay to allow click on dropdown
-  setTimeout(() => {
-    showChannelDropdown.value = false
-  }, 200)
-}
-
-const handleWelcomeChannelInputFocus = () => {
-  showWelcomeChannelDropdown.value = true
-}
-
-const handleWelcomeChannelInputBlur = () => {
-  // Delay to allow click on dropdown
-  setTimeout(() => {
-    showWelcomeChannelDropdown.value = false
-  }, 200)
-}
-
 const saveSettings = async () => {
   try {
     const response = await fetch(`/api/guilds/${guildId}/settings`, {
@@ -900,22 +507,6 @@ const goBack = () => {
 onMounted(async () => {
   await fetchGuildSettings()
   await fetchGuildChannels()
-
-  // Initialize channel search with selected channel name
-  if (settings.value.logs.channelId && channels.value.length > 0) {
-    const channel = channels.value.find(ch => ch.id === settings.value.logs.channelId)
-    if (channel) {
-      channelSearch.value = channel.name
-    }
-  }
-
-  // Initialize welcome channel search with selected channel name
-  if (settings.value.welcome.channelId && channels.value.length > 0) {
-    const channel = channels.value.find(ch => ch.id === settings.value.welcome.channelId)
-    if (channel) {
-      welcomeChannelSearch.value = channel.name
-    }
-  }
 })
 </script>
 
