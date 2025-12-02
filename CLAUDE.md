@@ -137,18 +137,42 @@ All serverless functions are in `/api`:
 - `db.js` - MongoDB connection with serverless caching
 - `discord.js` - Discord API interaction helpers
 
-## Frontend Components
+## Frontend Structure
 
-Located in `/src/components`:
+### Components (`/src/components`)
 
-- `Home.vue` - Landing page container
+#### Home Components (`/src/components/home/`)
 - `Hero.vue` - Hero section with Discord login button
 - `AboutBot.vue` - Bot description and features
 - `Features.vue` - Feature highlights
 - `Documentation.vue` - Complete command documentation with search and categorized commands
 - `Footer.vue` - Footer section
-- `Dashboard.vue` - Authenticated user dashboard
-- `GuildSettings.vue` - Guild configuration page
+
+#### UI Components (`/src/components/ui/`)
+- `ToggleSwitch.vue` - Reusable toggle switch with variants
+- `ChannelSelector.vue` - Discord channel selector dropdown
+- `SettingCard.vue` - Card container for settings sections
+- `CommandShowcase.vue` - Command display with copy functionality
+
+### Views (`/src/views`)
+- `HomeView.vue` - Landing page container
+- `DashboardView.vue` - Authenticated user dashboard
+- `GuildSettingsView.vue` - Guild configuration page with error handling
+
+### Composables (`/src/composables`)
+- `useAuth.js` - Authentication logic and logout with error handling
+- `useNotification.js` - Notification system for user feedback
+- `useDebounce.js` - Debounce utility for search inputs
+- `useCountUp.js` - Counter animation effects
+- `useScrollReveal.js` - Scroll-triggered reveal animations
+- `useCardTilt.js` - 3D card tilt effects
+
+### Utilities (`/src/utils`)
+- `animations.js` - **Centralized animation timing constants** including durations, delays, debounce timings, and notification durations. Always import timing values from this file instead of using magic numbers.
+
+### Data (`/src/data`)
+- `commands.js` - Bot command showcase data
+- `documentation.js` - Full command documentation with categories
 
 ## Important Implementation Details
 
@@ -162,6 +186,29 @@ Located in `/src/components`:
 6. Backend redirects to `/dashboard`
 7. Frontend reads `discord_user` cookie and displays dashboard
 
+### Logout with Error Handling
+
+The logout functionality (used in `GuildSettingsView.vue` and `DashboardView.vue`) includes comprehensive error handling:
+- Wraps logout call in try-catch block
+- Shows loading state during logout process
+- Displays user-friendly error notifications on failure
+- Only redirects when logout succeeds
+- Disables UI elements during the logout operation
+
+```javascript
+const handleLogout = async () => {
+  loggingOut.value = true
+  try {
+    await logout()
+    // Redirect handled by logout composable
+  } catch (err) {
+    showNotification(err?.message || 'Failed to logout. Please try again.', 'error')
+  } finally {
+    loggingOut.value = false
+  }
+}
+```
+
 ### Vercel Deployment Configuration
 
 `vercel.json` contains:
@@ -174,6 +221,35 @@ Located in `/src/components`:
 While using Mongoose, the codebase stores guild settings and user data. Check existing API handlers for schema definitions before making changes.
 
 ## Common Development Tasks
+
+### Using Animation Constants
+
+Always use centralized animation constants from `/src/utils/animations.js` instead of hardcoded values:
+
+```javascript
+import { ANIMATION_DURATION, NOTIFICATION_DURATION, DEBOUNCE_DELAY } from '@/utils/animations.js'
+
+// ✅ Good - uses centralized constants
+setTimeout(() => {
+  copiedCommand.value = null
+}, COPY_FEEDBACK_DURATION)
+
+const debouncedSearch = useDebounce(searchQuery, DEBOUNCE_DELAY.DEFAULT)
+showNotification('Settings saved!', 'success', NOTIFICATION_DURATION.DEFAULT)
+
+// ❌ Bad - hardcoded magic numbers
+setTimeout(() => {
+  copiedCommand.value = null
+}, 2000)
+```
+
+Available constants:
+- `ANIMATION_DURATION` - Standard animation durations (INSTANT, FAST, NORMAL, SLOW, LONG, COUNTER)
+- `NOTIFICATION_DURATION` - Notification display times (SHORT, DEFAULT, LONG, PERSISTENT)
+- `DEBOUNCE_DELAY` - Input debounce delays (FAST, DEFAULT, SLOW)
+- `DROPDOWN_TIMING` - Dropdown open/close timing
+- `COPY_FEEDBACK_DURATION` - Duration for copy feedback messages
+- `ENTRANCE_ANIMATION` - Initial delays for staggered animations
 
 ### Adding a New Serverless Function
 

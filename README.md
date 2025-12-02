@@ -42,13 +42,14 @@ DestroyerBot is a personal Discord bot built with Discord.js v14, featuring:
 - Modern UI using gradients, cards, and hover animations
 - Quick stats and social links
 
-### User Dashboard (New!)
+### User Dashboard
 - **Discord Authentication** - Secure OAuth 2.0 login flow
 - **User Profile Display** - Shows Discord avatar, username, email, and user ID
 - **Dashboard Stats** - Displays server count, commands used, and premium status
+- **Guild Management** - View and configure settings for servers where you have admin permissions
 - **Quick Actions** - Add bot to server and manage server settings
 - **Session Management** - Cookie-based authentication with 7-day expiration
-- **Logout Functionality** - Secure session termination
+- **Logout Functionality** - Secure session termination with error handling and loading states
 
 ## Project Structure
 
@@ -83,13 +84,36 @@ DestroyerBot-web/
 │   ├── App.vue                    # Root component
 │   │
 │   ├── components/                # Vue components
-│   │   ├── Home.vue               # Home page container
-│   │   ├── Hero.vue               # Hero section with login button
-│   │   ├── AboutBot.vue           # Bot description
-│   │   ├── Features.vue           # Feature highlights
-│   │   ├── Documentation.vue      # Complete command documentation
-│   │   ├── Footer.vue             # Footer section
-│   │   └── Dashboard.vue          # User dashboard (authenticated)
+│   │   ├── home/                  # Home page components
+│   │   │   ├── Hero.vue           # Hero section with login button
+│   │   │   ├── AboutBot.vue       # Bot description
+│   │   │   ├── Features.vue       # Feature highlights
+│   │   │   ├── Documentation.vue  # Complete command documentation
+│   │   │   └── Footer.vue         # Footer section
+│   │   └── ui/                    # Reusable UI components
+│   │       ├── ToggleSwitch.vue   # Toggle switch component
+│   │       ├── ChannelSelector.vue # Discord channel selector
+│   │       ├── SettingCard.vue    # Settings card container
+│   │       └── CommandShowcase.vue # Command display with copy
+│   │
+│   ├── views/                     # Page views
+│   │   ├── HomeView.vue           # Home page container
+│   │   ├── DashboardView.vue      # User dashboard (authenticated)
+│   │   └── GuildSettingsView.vue  # Guild settings page
+│   │
+│   ├── composables/               # Vue composables
+│   │   ├── useAuth.js             # Authentication logic
+│   │   ├── useNotification.js     # Notification system
+│   │   ├── useDebounce.js         # Debounce utility
+│   │   ├── useCountUp.js          # Counter animations
+│   │   └── useScrollReveal.js     # Scroll reveal effects
+│   │
+│   ├── utils/                     # Utility functions and constants
+│   │   └── animations.js          # Centralized animation timing constants
+│   │
+│   ├── data/                      # Static data and configurations
+│   │   ├── commands.js            # Bot command showcase data
+│   │   └── documentation.js       # Full command documentation
 │   │
 │   ├── router/
 │   │   └── index.js               # Vue Router configuration
@@ -102,11 +126,13 @@ DestroyerBot-web/
 
 ### Key Features:
 - Component-based architecture with Vue 3 Composition API
-- Vue Router for SPA navigation (`/` and `/dashboard` routes)
+- Vue Router for SPA navigation (`/`, `/dashboard`, and `/guild/:id` routes)
 - Vercel serverless functions for both development and production
 - MongoDB integration with connection caching for serverless
-- Cookie-based session management
+- Cookie-based session management with error handling
+- Centralized animation timing constants for consistent UX
 - Responsive design with Tailwind CSS v4
+- Reusable composables for common functionality (auth, notifications, debouncing)
 
 ## Development
 
